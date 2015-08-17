@@ -60,11 +60,11 @@
         }
     ],
     "require": {
-        "laravel/framework": "5.0.*",
+        "laravel/framework": "~5.0.0",
         "jasonlewis/expressive-date": "~1.0.2",
         "doctrine/dbal": "~2.5.1",
         "erusev/parsedown": "~1.5.1",
-        "pda/pheanstalk": "~2.1.1",
+        "pda/pheanstalk": "~3.0",
         "intervention/image": "~2.1.2",
         "stripe/stripe-php": "~2.1.1",
         "kriswallsmith/assetic": "~1.2.1",
