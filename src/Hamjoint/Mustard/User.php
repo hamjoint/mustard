@@ -136,6 +136,86 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Can
     }
 
     /**
+     * Return the user's feedback score.
+     *
+     * @return integer
+     */
+    public function getFeedbackScore()
+    {
+        return $this->feedbackReceived()->sum('modifier');
+    }
+
+    /**
+     * Relationship to bank details.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function bankDetails()
+    {
+        return $this->hasOne('\Hamjoint\Mustard\Commerce\BankDetail');
+    }
+
+    /**
+     * Relationship to bids.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bids()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Auctions\Bid');
+    }
+
+    /**
+     * Relationship to feedback left for other users.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function feedbackLeft()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Feedback\UserFeedback');
+    }
+
+    /**
+     * Relationship to feedback received from other users.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function feedbackReceived()
+    {
+        return $this->hasManyThrough('\Hamjoint\Mustard\Feedback\UserFeedback', '\Hamjoint\Mustard\Item');
+    }
+
+    /**
+     * Relationship to postal addresses.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function postalAddresses()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Commerce\PostalAddress');
+    }
+
+    /**
+     * Relationship to item purchases.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function purchases()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Commerce\Purchase');
+    }
+
+    /**
+     * Relationship to sold items.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function sales()
+    {
+        return $this->hasManyThrough('\Hamjoint\Mustard\Commerce\Purchase', '\Hamjoint\Mustard\Item');
+    }
+
+    /**
      * Relationship to items the user is selling.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -153,6 +233,15 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Can
     public function watching()
     {
         return $this->belongsToMany('\Hamjoint\Mustard\Item', 'watched_items');
+    }
+    /**
+     * Relationship to won items.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function won()
+    {
+        return $this->hasManyThrough('\Hamjoint\Mustard\Item', '\Hamjoint\Mustard\Auctions\Bid', 'user_id', 'winning_bid_id');
     }
 
     /**

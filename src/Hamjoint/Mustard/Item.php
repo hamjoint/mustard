@@ -351,6 +351,16 @@ class Item extends NonSequentialIdModel
     }
 
     /**
+     * Relationship to bids.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function bids()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Auctions\Bid');
+    }
+
+    /**
      * Relationship to categories.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -361,28 +371,43 @@ class Item extends NonSequentialIdModel
     }
 
     /**
-     * Relationship to categories.
+     * Relationship to delivery options.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function deliveryOptions()
     {
-        return $this->hasMany('\Hamjoint\Mustard\ItemDeliveryOption');
+        return $this->hasMany('\Hamjoint\Mustard\Commerce\DeliveryOption');
     }
 
+    /**
+     * Relationship to a feedback rating.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function feedback()
     {
-        return $this->hasOne('\Hamjoint\Mustard\Feedback');
+        return $this->hasOne('\Hamjoint\Mustard\Feedback\UserFeedback');
     }
 
+    /**
+     * Relationship to photos.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function photos()
     {
-        return $this->hasMany('\Hamjoint\Mustard\Photo');
+        return $this->hasMany('\Hamjoint\Mustard\Media\Photo');
     }
 
+    /**
+     * Relationship to purchases.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function purchases()
     {
-        return $this->hasMany('\Hamjoint\Mustard\Purchase');
+        return $this->hasMany('\Hamjoint\Mustard\Commerce\Purchase');
     }
 
     /**
@@ -403,6 +428,16 @@ class Item extends NonSequentialIdModel
     public function watchers()
     {
         return $this->belongsToMany('\Hamjoint\Mustard\User', 'watched_items');
+    }
+
+    /**
+     * Relationship to the winning bid.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function winningBid()
+    {
+        return $this->belongsTo('\Hamjoint\Mustard\Auctions\Bid');
     }
 
     /**
