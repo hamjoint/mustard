@@ -23,12 +23,14 @@ namespace Hamjoint\Mustard;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends NonSequentialIdModel implements  AuthenticatableContract, CanResetPasswordContract, HasRoleAndPermissionContract
+class User extends NonSequentialIdModel implements  AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use Authenticatable, CanResetPassword, HasRoleAndPermission;
+    use Authenticatable, Authorizable, CanResetPassword;
 
     /**
      * The database table used by the model.
@@ -49,68 +51,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Can
      *
      * @var array
      */
-    protected $hidden = ['password_hash', 'remember_token'];
-
-    /**
-     * Get the unique identifier for the user.
-     *
-     * @return mixed
-     */
-    public function getAuthIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Get the password for the user.
-     *
-     * @return string
-     */
-    public function getAuthPassword()
-    {
-        return $this->passwordHash;
-    }
-
-    /**
-     * Get the e-mail address where password reminders are sent.
-     *
-     * @return string
-     */
-    public function getReminderEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Get the token value for the "remember me" session.
-     *
-     * @return string
-     */
-    public function getRememberToken()
-    {
-        return $this->rememberToken;
-    }
-
-    /**
-     * Set the token value for the "remember me" session.
-     *
-     * @param string $value
-     * @return void
-     */
-    public function setRememberToken($value)
-    {
-        $this->rememberToken = $value;
-    }
-
-    /**
-     * Get the column name for the "remember me" token.
-     *
-     * @return string
-     */
-    public function getRememberTokenName()
-    {
-        return 'remember_token';
-    }
+    protected $hidden = ['password', 'remember_token'];
 
     /**
      * Shortcut method for sending a user an email.
@@ -143,6 +84,16 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Can
     public function getFeedbackScore()
     {
         return $this->feedbackReceived()->sum('modifier');
+    }
+
+    /**
+     * Override the parent's url attribute
+     *
+     * @return string
+     */
+    public function getUrlAttribute()
+    {
+        return '/' . strtolower(class_basename(static::class)) . '/' . $this->getKey();
     }
 
     /**
@@ -274,20 +225,14 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Can
      * @param string $username
      * @return \Hamjoint\Mustard\User
      */
-    public static function signUp($email, $password, $username)
+    public static function register($email, $password, $username)
     {
-        $user = new self;
-
-        $user->email = $email;
-        $user->passwordHash = \Hash::make($password);
-        $user->username = $username;
-        $user->joined = time();
-        $user->currency()->associate(Currency::first());
-        $user->country()->associate(Country::first());
-
-        $user->save();
-
-        return $user;
+        return self::create([
+            'email' => $email,
+            'passwordHash' => bcrypt($password),
+            'username' => $username,
+            'joined' => time(),
+        ]);
     }
 
     /**
