@@ -144,7 +144,7 @@ class Item extends NonSequentialIdModel
         return $this->photos->filter(function($photo)
         {
             return $photo->primary;
-        })->first() ?: new Photo;
+        })->first() ?: new \Hamjoint\Mustard\Media\Photo;
     }
 
     /**
