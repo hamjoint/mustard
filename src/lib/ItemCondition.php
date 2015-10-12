@@ -36,4 +36,14 @@ class ItemCondition extends Model
      * @var string
      */
     protected $primaryKey = 'item_condition_id';
+
+    /**
+     * Relationship to an item.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function item()
+    {
+        return $this->HasMany('\Hamjoint\Mustard\ItemCondition');
+    }
 }
