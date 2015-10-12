@@ -21,6 +21,8 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard;
 
+use DateTime;
+
 class Item extends NonSequentialIdModel
 {
     /**
@@ -36,57 +38,6 @@ class Item extends NonSequentialIdModel
      * @var string
      */
     protected $primaryKey = 'item_id';
-
-    /**
-     * Return the minimum possible bid, respecting configured bid increments.
-     *
-     * @param float $currentAmount
-     * @return float
-     */
-    public static function getMinimumBidAmount($currentAmount)
-    {
-        $bid_increments = BidIncrement::orderBy('value', 'asc')->get();
-
-        foreach ($bid_increments as $bid_increment) {
-            if ($currentAmount < $bid_increment->value) {
-                return $currentAmount + $bid_increment->value;
-            }
-        }
-
-        return $currentAmount + $bid_increments->max('value');
-    }
-
-    /**
-     * Shortcut to active items.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function active()
-    {
-        return self::with(['bids', 'categories', 'photos'])
-            ->where('start_date', '<=', time())
-            ->where('end_date', '>=', time());
-    }
-
-    /**
-     * Shortcut to auction items.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function auctionType()
-    {
-        return self::where('type', self::TYPE_AUCTION);
-    }
-
-    /**
-     * Shortcut to fixed-price items.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public static function fixedType()
-    {
-        return self::where('type', self::TYPE_FIXED);
-    }
 
     /**
      * Return UNIX timestamp for item's end.
@@ -105,9 +56,7 @@ class Item extends NonSequentialIdModel
      */
     public function getTimeLeft()
     {
-        $end_date = \DateTime::createFromFormat('U', $this->endDate);
-
-        return $end_date->diff(new \DateTime());
+        return (new DateTime())->diff(DateTime::createFromFormat('U', $this->endDate));
     }
 
     /**
@@ -117,9 +66,7 @@ class Item extends NonSequentialIdModel
      */
     public function getStartingIn()
     {
-        $start_date = \DateTime::createFromFormat('U', $this->startDate);
-
-        return (new \DateTime())->diff($start_date);
+        return (new DateTime())->diff(DateTime::createFromFormat('U', $this->startDate));
     }
 
     /**
@@ -205,7 +152,7 @@ class Item extends NonSequentialIdModel
      */
     public function isBuyer(User $user)
     {
-        return (bool) $this->purchases()->whereHas('user', function($query) use ($user)
+        return (bool) $this->purchases()->whereHas('buyer', function($query) use ($user)
         {
             return $query->where('user_id', $user->userId);
         })->count();
@@ -300,7 +247,7 @@ class Item extends NonSequentialIdModel
      */
     public function placeBid($amount, User $user)
     {
-        $bid = new Bid;
+        $bid = new \Hamjoint\Mustard\Auctions\Bid;
 
         $bid->amount = $amount;
         $bid->placed = time();
@@ -317,7 +264,7 @@ class Item extends NonSequentialIdModel
      */
     public function end()
     {
-        if ($this->isAuction()) {
+        if ($this->auction) {
             $bid = $this->getBidHistory()->first();
 
             if ($bid) $this->winningBid()->associate($bid);
@@ -351,6 +298,75 @@ class Item extends NonSequentialIdModel
     }
 
     /**
+     * Search the name and description of items for specific keywords.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $keyword
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeKeywords($query, $keyword)
+    {
+        return $query->where('name', 'LIKE', "%$keyword%")
+            ->orWhere('description', 'LIKE', "%$keyword%");
+    }
+
+    /**
+     * Scope of active items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('start_date', '<=', time())
+            ->where('end_date', '>=', time());
+    }
+
+    /**
+     * Scope of ended items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeEnded($query)
+    {
+        return $query->where('end_date', '<', time());
+    }
+
+    /**
+     * Scope of scheduled items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeScheduled($query)
+    {
+        return $query->where('start_date', '>', time());
+    }
+
+    /**
+     * Scope of auction items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTypeAuction($query)
+    {
+        return $query->where('auction', true);
+    }
+
+    /**
+     * Scope of fixed-price items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeTypeFixed($query)
+    {
+        return $query->where('auction', false);
+    }
+
+    /**
      * Relationship to bids.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -371,6 +387,16 @@ class Item extends NonSequentialIdModel
     }
 
     /**
+     * Relationship to an item condition.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function condition()
+    {
+        return $this->belongsTo('\Hamjoint\Mustard\ItemCondition', 'item_condition_id');
+    }
+
+    /**
      * Relationship to delivery options.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -378,16 +404,6 @@ class Item extends NonSequentialIdModel
     public function deliveryOptions()
     {
         return $this->hasMany('\Hamjoint\Mustard\Commerce\DeliveryOption');
-    }
-
-    /**
-     * Relationship to a feedback rating.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function feedback()
-    {
-        return $this->hasOne('\Hamjoint\Mustard\Feedback\UserFeedback');
     }
 
     /**
@@ -438,6 +454,25 @@ class Item extends NonSequentialIdModel
     public function winningBid()
     {
         return $this->belongsTo('\Hamjoint\Mustard\Auctions\Bid');
+    }
+
+    /**
+     * Return the minimum possible bid, respecting configured bid increments.
+     *
+     * @param float $currentAmount
+     * @return float
+     */
+    public static function getMinimumBidAmount($currentAmount)
+    {
+        $bid_increments = \Hamjoint\Mustard\Auctions\BidIncrement::orderBy('increment', 'asc')->get();
+
+        foreach ($bid_increments as $bid_increment) {
+            if ($currentAmount < $bid_increment->increment) {
+                return $currentAmount + $bid_increment->increment;
+            }
+        }
+
+        return $currentAmount + $bid_increments->max('increment');
     }
 
     /**

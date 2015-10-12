@@ -27,6 +27,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Collection;
 
 class User extends NonSequentialIdModel implements  AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
@@ -63,12 +64,12 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     public function sendEmail($subject, $view, $vars = [])
     {
         $vars['email'] = $email = $this->email;
-        $vars['handle'] = $handle = $this->getHandle();
+        $vars['username'] = $username = $this->username;
 
-        \Mail::queue(['text' => $view], $vars, function($message) use ($email, $handle, $subject)
+        \Mail::queue(['text' => $view], $vars, function($message) use ($email, $username, $subject)
         {
             $message->subject($subject)
-                ->to($email, $handle)
+                ->to($email, $username)
                 ->replyTo(
                     \Config::get('mail.reply_to.address'),
                     \Config::get('mail.reply_to.name')
@@ -83,7 +84,65 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function getFeedbackScore()
     {
-        return $this->feedbackReceived()->sum('modifier');
+        return $this->feedbackReceived->sum('rating');
+    }
+
+    /**
+     * Get users the user has a substantial connection with.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAcquaintances()
+    {
+        $acquaintances = new Collection;
+
+        // Past message senders
+        foreach ($this->messages()->received()->with('sender')->get() as $message) {
+            $acquaintances = $acquaintances->push($message->sender);
+        }
+
+        // Past message recipients
+        foreach ($this->messages()->sent()->with('recipient')->get() as $message) {
+            $acquaintances = $acquaintances->push($message->recipient);
+        }
+
+        // Past sellers
+        foreach ($this->purchases()->with('item.seller')->get() as $purchase) {
+            $acquaintances = $acquaintances->push($purchase->item->seller);
+        }
+
+        // Past buyers
+        foreach ($this->items()->with('purchases.buyer')->get() as $item) {
+            foreach ($item->purchases as $purchase) {
+                $acquaintances = $acquaintances->push($purchase->buyer);
+            }
+        }
+
+        return $acquaintances->unique();
+    }
+
+    /**
+     * Return the time difference between now and the user's last login.
+     *
+     * @return \DateInterval
+     */
+    public function getSinceLastLogin()
+    {
+        $last_login = \DateTime::createFromFormat('U', $this->lastLogin);
+
+        return $last_login->diff(new \DateTime());
+    }
+
+    /**
+     * Return the time difference between now and the user's join date.
+     *
+     * @return \DateInterval
+     */
+    public function getSinceJoined()
+    {
+        $joined = \DateTime::createFromFormat('U', $this->joined);
+
+        return $joined->diff(new \DateTime());
     }
 
     /**
@@ -94,6 +153,49 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     public function getUrlAttribute()
     {
         return '/' . strtolower(class_basename(static::class)) . '/' . $this->getKey();
+    }
+
+    /**
+     * Return the user's feedback url
+     *
+     * @return string
+     */
+    public function getFeedbackUrlAttribute()
+    {
+        return '/' . strtolower(class_basename(static::class)) . '/feedback/' . $this->getKey();
+    }
+
+    /**
+     * Return true if user is watching the item.
+     *
+     * @param \Hamjoint\Mustard\Item $item
+     * @return boolean
+     */
+    public function isWatching(Item $item)
+    {
+        return (bool) $this->watching()->where('items.item_id', $item->itemId)->count();
+    }
+
+    /**
+     * Scope of buyers.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeBuyers($query)
+    {
+        return $query->has('purchases');
+    }
+
+    /**
+     * Scope of sellers.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeSellers($query)
+    {
+        return $query->has('items');
     }
 
     /**
@@ -123,7 +225,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function feedbackLeft()
     {
-        return $this->hasMany('\Hamjoint\Mustard\Feedback\UserFeedback');
+        return $this->hasMany('\Hamjoint\Mustard\Feedback\UserFeedback', 'rater_user_id');
     }
 
     /**
@@ -133,7 +235,27 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function feedbackReceived()
     {
-        return $this->hasManyThrough('\Hamjoint\Mustard\Feedback\UserFeedback', '\Hamjoint\Mustard\Item');
+        return $this->hasMany('\Hamjoint\Mustard\Feedback\UserFeedback', 'subject_user_id');
+    }
+
+    /**
+     * Relationship to items the user has listed.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Item');
+    }
+
+    /**
+     * Relationship to messages.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function messages()
+    {
+        return $this->hasMany('\Hamjoint\Mustard\Messaging\Message');
     }
 
     /**
@@ -164,16 +286,6 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     public function sales()
     {
         return $this->hasManyThrough('\Hamjoint\Mustard\Commerce\Purchase', '\Hamjoint\Mustard\Item');
-    }
-
-    /**
-     * Relationship to items the user is selling.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function selling()
-    {
-        return $this->hasMany('\Hamjoint\Mustard\Item');
     }
 
     /**
