@@ -26,7 +26,7 @@ See composer.json.
 
 #### Via Composer (using Packagist)
 
-```bash
+```sh
 composer require hamjoint/mustard
 ```
 
