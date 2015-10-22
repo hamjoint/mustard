@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Hamjoint\\Mustard\\": "src/"
+            "Hamjoint\\Mustard\\": "src/lib/"
         }
     },
     "config": {
