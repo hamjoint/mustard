@@ -35,7 +35,7 @@ class AccountController extends Controller
      */
     public function getIndex()
     {
-        return redirect('/account/password');
+        return mustard_redirect('/account/password');
     }
 
     /**
@@ -66,12 +66,12 @@ class AccountController extends Controller
         );
 
         if (!\Hash::check($request->get('old_password'), Auth::user()->password_hash)) {
-            return redirect('/account/password')
+            return redirect()->back()
                 ->withErrors(['old_password' => "Your old password is not correct."]);
         }
 
         if ($request->get('old_password') == $request->get('new_password')) {
-            return redirect('/account/password');
+            return redirect()->back();
         }
 
         Auth::user()->passwordHash = \Hash::make($request->get('new_password'));
@@ -114,13 +114,11 @@ class AccountController extends Controller
         );
 
         if ($request->get('email') == Auth::user()->email) {
-            return redirect('/account/email');
+            return redirect()->back();
         }
 
         if (User::findByEmail($request->get('email'))) {
-            self::formFlash(['email']);
-
-            return redirect('/account/email')
+            return redirect()->back()
                 ->withErrors(['email' => "That email address is in use by another account."]);
         }
 

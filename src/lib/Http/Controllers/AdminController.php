@@ -37,7 +37,7 @@ class AdminController extends Controller
      */
     public function getIndex()
     {
-        return redirect('/admin/dashboard');
+        return mustard_redirect('/admin/dashboard');
     }
 
     /**
@@ -51,47 +51,47 @@ class AdminController extends Controller
             'User stats' => [
                 'Registered' => function($range)
                 {
-                    return n(User::totalRegistered($range));
+                    return mustard_number(User::totalRegistered($range));
                 },
                 'Bidders' => function($range)
                 {
-                    return n(User::totalBidders($range));
+                    return mustard_number(User::totalBidders($range));
                 },
                 'Buyers' => function($range)
                 {
-                    return n(User::totalBuyers($range));
+                    return mustard_number(User::totalBuyers($range));
                 },
                 'Sellers' => function($range)
                 {
-                    return n(User::totalSellers($range));
+                    return mustard_number(User::totalSellers($range));
                 },
             ],
             'Item stats' => [
                 'Listed' => function($range)
                 {
-                    return n(Item::totalListed($range));
+                    return mustard_number(Item::totalListed($range));
                 },
                 'Bids placed' => function($range)
                 {
-                    return n(\Hamjoint\Mustard\Auctions\Bid::totalPlaced($range));
+                    return mustard_number(\Hamjoint\Mustard\Auctions\Bid::totalPlaced($range));
                 },
                 'Average bid amount' => function($range)
                 {
-                    return p(\Hamjoint\Mustard\Auctions\Bid::averageAmount($range));
+                    return mustard_price(\Hamjoint\Mustard\Auctions\Bid::averageAmount($range));
                 },
                 'Watched' => function($range)
                 {
-                    return n(Item::totalWatched($range));
+                    return mustard_number(Item::totalWatched($range));
                 },
             ],
             'Transaction stats' => [
                 'Purchases' => function($range)
                 {
-                    return n(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
+                    return mustard_number(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
                 },
                 'Average amount' => function($range)
                 {
-                    return p(\Hamjoint\Mustard\Commerce\Purchase::averageAmount($range));
+                    return mustard_price(\Hamjoint\Mustard\Commerce\Purchase::averageAmount($range));
                 },
             ],
         ];
