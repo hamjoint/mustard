@@ -1,15 +1,34 @@
 ## Mustard
 
-Mustard is an open source auction and marketplace platform, similar to [eBay](http://www.ebay.com/). It is developed and maintained by [Hamjoint CIC](http://www.hamjoint.org/) for [Hamjoint](https://www.hamjoint.com/), a marketplace dedicated to amateur radio and electronics.
+Mustard is an open source marketplace platform, similar to [eBay](http://www.ebay.com/). It is developed and maintained by [Hamjoint CIC](http://www.hamjoint.org/) for [Hamjoint Market](https://www.hamjoint.com/market), a marketplace dedicated to amateur radio and electronics.
+
+Mustard is dependent on several components of the [Laravel framework](http://laravel.com), and supports [Composer](https://getcomposer.org/) for dependency management. Building a Mustard-based application requires some knowledge of PHP development.
 
 ### Features
 
 * User accounts
-* Feedback system
-* Card processing
-* Messaging
-* Photo uploading
+* Classifieds adverts
 * Email notifications
+* Auctions (via [mustard-auctions](https://github.com/hamjoint/mustard-auctions) module)
+* Purchasing system (via [mustard-commerce](https://github.com/hamjoint/mustard-commerce) module)
+* User feedback (via [mustard-feedback](https://github.com/hamjoint/mustard-feedback) module)
+* Paypal support (via [mustard-paypal](https://github.com/hamjoint/mustard-paypal) module)
+* Stripe support (via [mustard-stripe](https://github.com/hamjoint/mustard-stripe) module)
+* Messaging (via [mustard-messaging](https://github.com/hamjoint/mustard-messaging) module)
+* Photo & video uploads (via [mustard-media](https://github.com/hamjoint/mustard-media) module)
+* Full documentation
+
+### Requirements
+
+See composer.json.
+
+### Installation
+
+#### Via Composer (using Packagist)
+
+```bash
+composer require hamjoint/mustard
+```
 
 ### Licence
 
