@@ -70,6 +70,16 @@ class Item extends NonSequentialIdModel
     }
 
     /**
+     * Return the time difference between 0 and the end of the duration.
+     *
+     * @return \DateInterval
+     */
+    public function getDuration()
+    {
+        return DateTime::createFromFormat('U', 0)->diff(DateTime::createFromFormat('U', $this->duration));
+    }
+
+    /**
      * Return the highest bid amount placed.
      *
      * @return float
