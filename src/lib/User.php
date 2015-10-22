@@ -339,12 +339,19 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public static function register($email, $password, $username)
     {
-        return self::create([
-            'email' => $email,
-            'passwordHash' => bcrypt($password),
-            'username' => $username,
-            'joined' => time(),
-        ]);
+        $user = new self;
+
+        $user->email = $email;
+
+        $user->passwordHash = bcrypt($password);
+
+        $user->username = $username;
+
+        $user->joined = time();
+
+        $user->save();
+
+        return $user;
     }
 
     /**
