@@ -343,7 +343,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
 
         $user->email = $email;
 
-        $user->passwordHash = bcrypt($password);
+        $user->password = bcrypt($password);
 
         $user->username = $username;
 
