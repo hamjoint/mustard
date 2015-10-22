@@ -43,11 +43,5 @@ Route::group([
 
     Route::get('user/{id}', ['uses' => 'UserController@getIndex']);
 
-    Route::get('glossary/{page}', ['uses' => 'GlossaryController@getView'])->where('page', '[a-z0-9-]+');
-    Route::controller('glossary', 'GlossaryController');
-
-    Route::get('help/{page}', ['uses' => 'HelpController@getView'])->where('page', '[a-z0-9-]+');
-    Route::controller('help', 'HelpController');
-
     Route::get('', 'MetaController@getIndex');
 });
