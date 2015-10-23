@@ -10,8 +10,9 @@
         @include('mustard::inventory.nav')
     </div>
     <div class="medium-10 columns">
-        @if ($items->count())
-            @foreach ($items->chunk(4) as $chunked_items)
+        @include('tablelegs::filter')
+        @if ($table->hasRows())
+            @foreach ($table->getRows()->chunk(4) as $chunked_items)
                 <div class="row">
                     @foreach ($chunked_items as $item)
                         <div class="medium-3 columns end mosaic {{ $item->isEnded() ? 'ended' : '' }}">
@@ -26,11 +27,11 @@
                                 </form>
                                 <div class="price">
                                     @if (!$item->auction)
-                                        {{ mustard_price($item->fixedPrice ?: '-') }}
+                                        {{ mustard_price($item->fixedPrice ?: '-', true) }}
                                     @elseif ($item->auction)
-                                        {{ mustard_price($item->biddingPrice) }} ({{ mustard_number($item->bids->count()) }} bids)
+                                        {{ mustard_price($item->biddingPrice, true) }} ({{ mustard_number($item->bids->count(), 0) }} bids)
                                         @if ($item->hasFixed())
-                                            <br />or buy now for {{ mustard_price($item->fixedPrice ?: '-') }}
+                                            <br />or buy now for {{ mustard_price($item->fixedPrice ?: '-', true) }}
                                         @endif
                                     @endif
                                 </div>
@@ -48,7 +49,7 @@
             </div>
             <div class="row">
                 <div class="medium-12 columns text-center">
-                    {!! $items->render() !!}
+                    {!! $table->getPaginator()->render() !!}
                 </div>
             </div>
         @else

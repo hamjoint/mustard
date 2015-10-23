@@ -22,6 +22,8 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 namespace Hamjoint\Mustard\Http\Controllers;
 
 use Auth;
+use Hamjoint\Mustard\Tables\InventoryWatching;
+use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
@@ -40,14 +42,12 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getWatching()
+    public function getWatching(Request $request)
     {
-        $items = Auth::user()->watching()
-            ->orderBy('end_date', 'asc')
-            ->paginate();
+        $table = new InventoryWatching(Auth::user()->watching(), $request);
 
         return view('mustard::inventory.watching', [
-            'items' => $items,
+            'table' => $table,
         ]);
     }
 }
