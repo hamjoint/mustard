@@ -29,9 +29,5 @@
         "psr-4": {
             "Hamjoint\\Mustard\\": "src/lib/"
         }
-    },
-    "config": {
-        "preferred-install": "dist"
-    },
-    "prefer-stable": true
+    }
 }
