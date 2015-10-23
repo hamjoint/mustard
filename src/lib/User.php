@@ -21,6 +21,7 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard;
 
+use DateTime;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -71,8 +72,8 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
             $message->subject($subject)
                 ->to($email, $username)
                 ->replyTo(
-                    \Config::get('mail.reply_to.address'),
-                    \Config::get('mail.reply_to.name')
+                    config('mail.reply_to.address'),
+                    config('mail.reply_to.name')
                 );
         });
     }
@@ -128,9 +129,9 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function getSinceLastLogin()
     {
-        $last_login = \DateTime::createFromFormat('U', $this->lastLogin);
+        $last_login = DateTime::createFromFormat('U', $this->lastLogin);
 
-        return $last_login->diff(new \DateTime());
+        return $last_login->diff(new DateTime());
     }
 
     /**
@@ -140,9 +141,9 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function getSinceJoined()
     {
-        $joined = \DateTime::createFromFormat('U', $this->joined);
+        $joined = DateTime::createFromFormat('U', $this->joined);
 
-        return $joined->diff(new \DateTime());
+        return $joined->diff(new DateTime());
     }
 
     /**
