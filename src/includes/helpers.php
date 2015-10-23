@@ -76,19 +76,25 @@ function mustard_datetime($timestamp)
  * Return a number formatted according to a locale's currency.
  *
  * @param mixed $number
- * @param string $locale
  * @param bool $national
+ * @param string $locale
  * @return string
  */
-function mustard_price($number, $locale, $national = false)
+function mustard_price($number, $national = false, $locale = null)
 {
     if (!is_numeric($number)) return $number;
+
+    if (is_null($locale)) {
+        $locale = config('app.locale');
+    }
 
     $old_locale = setlocale(LC_MONETARY, $locale);
 
     $output = money_format($national ? '%n' : '%i', $number);
 
-    setlocale(LC_MONETARY, $old_locale);
+    if ($old_locale) {
+        setlocale(LC_MONETARY, $old_locale);
+    }
 
     return $output;
 }
@@ -97,15 +103,21 @@ function mustard_price($number, $locale, $national = false)
  * Return a number formatted according to a locale.
  *
  * @param mixed $number
- * @param string $locale
  * @param int $decimalPlaces
+ * @param string $locale
  * @return string
  */
-function mustard_number($number, $locale, $decimalPlaces = 2)
+function mustard_number($number, $decimalPlaces = 2, $locale = null)
 {
     if (!is_numeric($number)) return $number;
 
-    $old_locale = setlocale(LC_MONETARY, $locale);
+    if (is_null($locale)) {
+        $locale = config('app.locale');
+    }
+
+    $old_locale = setlocale(LC_NUMERIC, $locale);
+
+    $locale_info = localeconv();
 
     $output = number_format(
         $number,
@@ -114,7 +126,9 @@ function mustard_number($number, $locale, $decimalPlaces = 2)
         $locale_info['thousands_sep']
     );
 
-    setlocale(LC_MONETARY, $old_locale);
+    if ($old_locale) {
+        setlocale(LC_NUMERIC, $old_locale);
+    }
 
     return $output;
 }
