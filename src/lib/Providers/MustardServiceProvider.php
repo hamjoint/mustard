@@ -59,6 +59,6 @@ class MustardServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->register('Tablelegs\Providers\TablelegsServiceProvider');
     }
 }
