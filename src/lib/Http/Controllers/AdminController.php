@@ -53,10 +53,6 @@ class AdminController extends Controller
                 {
                     return mustard_number(User::totalRegistered($range));
                 },
-                'Buyers' => function($range)
-                {
-                    return mustard_number(User::totalBuyers($range));
-                },
                 'Sellers' => function($range)
                 {
                     return mustard_number(User::totalSellers($range));
@@ -92,6 +88,11 @@ class AdminController extends Controller
         }
 
         if (mustard_loaded('commerce')) {
+            $stats['User stats']['Buyers'] = function($range)
+            {
+                return mustard_number(User::totalBuyers($range));
+            };
+
             $stats['Transaction stats']['Purchases'] = function($range)
             {
                 return mustard_number(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
