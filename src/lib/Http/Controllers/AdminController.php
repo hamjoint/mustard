@@ -53,10 +53,6 @@ class AdminController extends Controller
                 {
                     return mustard_number(User::totalRegistered($range));
                 },
-                'Bidders' => function($range)
-                {
-                    return mustard_number(User::totalBidders($range));
-                },
                 'Buyers' => function($range)
                 {
                     return mustard_number(User::totalBuyers($range));
@@ -71,30 +67,41 @@ class AdminController extends Controller
                 {
                     return mustard_number(Item::totalListed($range));
                 },
-                'Bids placed' => function($range)
-                {
-                    return mustard_number(\Hamjoint\Mustard\Auctions\Bid::totalPlaced($range));
-                },
-                'Average bid amount' => function($range)
-                {
-                    return mustard_price(\Hamjoint\Mustard\Auctions\Bid::averageAmount($range));
-                },
                 'Watched' => function($range)
                 {
                     return mustard_number(Item::totalWatched($range));
                 },
             ],
-            'Transaction stats' => [
-                'Purchases' => function($range)
-                {
-                    return mustard_number(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
-                },
-                'Average amount' => function($range)
-                {
-                    return mustard_price(\Hamjoint\Mustard\Commerce\Purchase::averageAmount($range));
-                },
-            ],
         ];
+
+        if (mustard_loaded('auctions')) {
+            $stats['User stats']['Bidders'] = function($range)
+            {
+                return mustard_number(User::totalBidders($range));
+            };
+
+            $stats['Item stats']['Bids placed'] = function($range)
+            {
+                return mustard_number(\Hamjoint\Mustard\Auctions\Bid::totalPlaced($range));
+            };
+
+            $stats['Item stats']['Average bid amount'] = function($range)
+            {
+                return mustard_price(\Hamjoint\Mustard\Auctions\Bid::averageAmount($range));
+            };
+        }
+
+        if (mustard_loaded('commerce')) {
+            $stats['Transaction stats']['Purchases'] = function($range)
+            {
+                return mustard_number(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
+            };
+
+            $stats['Transaction stats']['Average amount'] = function($range)
+            {
+                return mustard_price(\Hamjoint\Mustard\Commerce\Purchase::averageAmount($range));
+            };
+        }
 
         $ranges = [
             'Today' => strtotime('midnight'),

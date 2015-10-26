@@ -196,3 +196,10 @@ function mustard_time($diff, $depth = 4, $short = false)
 
     return implode(', ', $str);
 }
+
+function mustard_loaded($module)
+{
+    $module = Illuminate\Support\Str::studly($module);
+
+    return class_exists("\Hamjoint\Mustard\{$module}\Providers\{$module}ServiceProvider");
+}
