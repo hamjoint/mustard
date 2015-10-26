@@ -48,7 +48,7 @@
             @endforeach
             </div>
             <div class="row">
-                <div class="medium-12 columns text-center">
+                <div class="medium-12 columns pagination-cenetered">
                     {!! $table->getPaginator()->render() !!}
                 </div>
             </div>
