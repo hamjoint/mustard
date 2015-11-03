@@ -22,6 +22,9 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 namespace Hamjoint\Mustard\Http\Controllers;
 
 use Auth;
+use Hamjoint\Mustard\Tables\InventoryEnded;
+use Hamjoint\Mustard\Tables\InventorySelling;
+use Hamjoint\Mustard\Tables\InventoryScheduled;
 use Hamjoint\Mustard\Tables\InventoryWatching;
 use Illuminate\Http\Request;
 
@@ -42,12 +45,49 @@ class InventoryController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getWatching(Request $request)
+    public function getWatching()
     {
-        $table = new InventoryWatching(Auth::user()->watching(), $request);
+        $table = new InventoryWatching(Auth::user()->watching());
 
         return view('mustard::inventory.watching', [
             'table' => $table,
+            'items' => $table->paginate(),
+        ]);
+    }
+
+    public function getSelling()
+    {
+        $items = Auth::user()->items()->active();
+
+        $table = new InventorySelling($items);
+
+        return view('mustard::inventory.selling', [
+            'table' => $table,
+            'items' => $table->paginate(),
+        ]);
+    }
+
+    public function getScheduled()
+    {
+        $items = Auth::user()->items()->scheduled();
+
+        $table = new InventoryScheduled($items);
+
+        return view('mustard::inventory.scheduled', [
+            'table' => $table,
+            'items' => $table->paginate(),
+        ]);
+    }
+
+    public function getEnded()
+    {
+        $items = Auth::user()->items()->where('end_date', '<', time());
+
+        $table = new InventoryEnded($items);
+
+        return view('mustard::inventory.ended', [
+            'table' => $table,
+            'items' => $table->paginate(),
         ]);
     }
 }

@@ -21,6 +21,9 @@ Route::group([
 
         Route::get('inventory', ['uses' => 'InventoryController@getIndex']);
         Route::get('inventory/watching', ['uses' => 'InventoryController@getWatching']);
+        Route::get('inventory/selling', ['uses' => 'InventoryController@getSelling']);
+        Route::get('inventory/scheduled', ['uses' => 'InventoryController@getScheduled']);
+        Route::get('inventory/ended', ['uses' => 'InventoryController@getEnded']);
 
         Route::get('sell', 'ItemController@getNew');
         Route::get('item/new', 'ItemController@getNew');
