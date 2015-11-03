@@ -197,6 +197,12 @@ function mustard_time($diff, $depth = 4, $short = false)
     return implode(', ', $str);
 }
 
+/**
+ * Return true if the Mustard module is loaded.
+ *
+ * @param string $module
+ * @return bool
+ */
 function mustard_loaded($module)
 {
     $module = Illuminate\Support\Str::studly($module);
