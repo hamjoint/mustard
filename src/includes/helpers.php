@@ -107,7 +107,7 @@ function mustard_price($number, $national = false, $locale = null)
  * @param string $locale
  * @return string
  */
-function mustard_number($number, $decimalPlaces = 2, $locale = null)
+function mustard_number($number, $decimalPlaces = 0, $locale = null)
 {
     if (!is_numeric($number)) return $number;
 
