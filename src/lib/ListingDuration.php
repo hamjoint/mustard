@@ -21,19 +21,32 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard;
 
-class ItemDuration extends Model
+use DateTime;
+
+class ListingDuration extends Model
 {
     /**
      * The database table used by the model.
      *
      * @var string
      */
-    protected $table = 'item_durations';
+    protected $table = 'listing_durations';
 
     /**
      * The database key used by the model.
      *
      * @var string
      */
-    protected $primaryKey = 'item_duration_id';
+    protected $primaryKey = 'listing_duration_id';
+
+    /**
+     * Return the time difference of the duration.
+     *
+     * @return \DateInterval
+     */
+    public function getDuration()
+    {
+        return DateTime::createFromFormat('U', 0)
+            ->diff(DateTime::createFromFormat('U', $this->duration));
+    }
 }
