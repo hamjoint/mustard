@@ -24,6 +24,7 @@ namespace Hamjoint\Mustard\Http\Controllers;
 use Cache;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\Tables\AdminItems;
+use Hamjoint\Mustard\Tables\AdminSettings;
 use Hamjoint\Mustard\Tables\AdminUsers;
 use Hamjoint\Mustard\User;
 use Illuminate\Http\Request;
@@ -48,16 +49,6 @@ class AdminController extends Controller
     public function getDashboard()
     {
         $stats = [
-            'User stats' => [
-                'Registered' => function($range)
-                {
-                    return mustard_number(User::totalRegistered($range));
-                },
-                'Sellers' => function($range)
-                {
-                    return mustard_number(User::totalSellers($range));
-                },
-            ],
             'Item stats' => [
                 'Listed' => function($range)
                 {
@@ -66,6 +57,16 @@ class AdminController extends Controller
                 'Watched' => function($range)
                 {
                     return mustard_number(Item::totalWatched($range));
+                },
+            ],
+            'User stats' => [
+                'Registered' => function($range)
+                {
+                    return mustard_number(User::totalRegistered($range));
+                },
+                'Sellers' => function($range)
+                {
+                    return mustard_number(User::totalSellers($range));
                 },
             ],
         ];
@@ -123,12 +124,19 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getItems(Request $request)
+    public function getItems()
     {
-        $table = new AdminItems(Item::query(), $request);
+        $table = new AdminItems(Item::query());
+
+        $table->with('seller');
+
+        if (mustard_loaded('feedback')) {
+            $table->with('seller.feedbackReceived');
+        }
 
         return view('mustard::admin.items', [
             'table' => $table,
+            'items' => $table->paginate(),
         ]);
     }
 
@@ -137,12 +145,40 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getUsers(Request $request)
+    public function getUsers()
     {
-        $table = new AdminUsers(User::query(), $request);
+        $table = new AdminUsers(User::query());
+
+        if (mustard_loaded('feedback')) {
+            $table->with('feedbackReceived');
+        }
 
         return view('mustard::admin.users', [
             'table' => $table,
+            'users' => $table->paginate(),
+        ]);
+    }
+
+    /**
+     * Return the admin settings view.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function getSettings()
+    {
+        $config = config('mustard');
+
+        array_walk($config, function (&$value) {
+            if (!is_scalar($value) || is_bool($value)) {
+                $value = var_export($value, true);
+            }
+        });
+
+        $table = new AdminSettings($config);
+
+        return view('mustard::admin.settings', [
+            'table' => $table,
+            'settings' => $table->paginate(),
         ]);
     }
 

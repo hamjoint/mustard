@@ -59,6 +59,16 @@ class ListingController extends Controller
 
         $table = new ListingItems($items, $request);
 
+        $table->with('categories');
+
+        if (mustard_loaded('auctions')) {
+            $table->with('bids');
+        }
+
+        if (mustard_loaded('media')) {
+            $table->with('photos');
+        }
+
         return view('mustard::listings.list', [
             'categories' => Category::roots()
                 ->with('children')
@@ -66,6 +76,7 @@ class ListingController extends Controller
                 ->orderBy('name', 'asc')
                 ->get(),
             'table' => $table,
+            'items' => $table->paginate(),
             'view_category' => $category,
         ]);
     }
