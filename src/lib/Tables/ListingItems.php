@@ -33,23 +33,17 @@ class ListingItems extends Table
         ],
     ];
 
-    public $eagerLoad = [
-        'bids',
-        'categories',
-        'photos',
-    ];
-
     public $defaultSortKey = 'end_date';
 
     public $presenter = FoundationFivePresenter::class;
 
-    public function filterTypeAuction($builder)
+    public function filterTypeAuction()
     {
-        $builder->TypeAuction();
+        $this->db->TypeAuction();
     }
 
-    public function filterTypeFixed($builder)
+    public function filterTypeFixed()
     {
-        $builder->TypeFixed();
+        $this->db->TypeFixed();
     }
 }

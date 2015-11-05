@@ -34,27 +34,22 @@ class InventoryWatching extends Table
         ],
     ];
 
-    public $eagerLoad = [
-        'bids',
-        'photos',
-    ];
-
     public $defaultSortKey = 'time_ended';
 
     public $presenter = FoundationFivePresenter::class;
 
-    public function filterStatusActive($builder)
+    public function filterStatusActive()
     {
-        $builder->active();
+        $this->db->active();
     }
 
-    public function filterStatusEnded($builder)
+    public function filterStatusEnded()
     {
-        $builder->ended();
+        $this->db->ended();
     }
 
-    public function sortTimeEnded($builder, $sortOrder)
+    public function sortTimeEnded($sortOrder)
     {
-        $builder->orderBy(DB::raw('unix_timestamp() - cast(`end_date` as signed)'), $sortOrder);
+        $this->db->orderBy(DB::raw('unix_timestamp() - cast(`end_date` as signed)'), $sortOrder);
     }
 }

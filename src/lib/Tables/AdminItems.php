@@ -47,54 +47,49 @@ class AdminItems extends Table
         ],
     ];
 
-    public $eagerLoad = [
-        'seller',
-        'seller.feedbackReceived',
-    ];
-
     public $defaultSortKey = 'time_left';
 
     public $presenter = FoundationFivePresenter::class;
 
-    public function filterStateEnded($builder)
+    public function filterStateEnded()
     {
-        $builder->ended();
+        $this->db->ended();
     }
 
-    public function filterStateActive($builder)
+    public function filterStateActive()
     {
-        $builder->active();
+        $this->db->active();
     }
 
-    public function filterStateScheduled($builder)
+    public function filterStateScheduled()
     {
-        $builder->scheduled();
+        $this->db->scheduled();
     }
 
-    public function filterTypeAuction($builder)
+    public function filterTypeAuction()
     {
-        $builder->typeAuction();
+        $this->db->typeAuction();
     }
 
-    public function filterTypeFixed($builder)
+    public function filterTypeFixed()
     {
-        $builder->typeFixed();
+        $this->db->typeFixed();
     }
 
-    public function sortSeller($builder, $sortOrder)
+    public function sortSeller($sortOrder)
     {
-        $builder->join('users', 'items.user_id', '=', 'users.user_id');
+        $this->db->join('users', 'items.user_id', '=', 'users.user_id');
 
-        $builder->orderBy('users.username', $sortOrder);
+        $this->db->sort('users.username', $sortOrder);
     }
 
-    public function sortStartingIn($builder, $sortOrder)
+    public function sortStartingIn($sortOrder)
     {
-        $builder->orderBy(DB::raw('cast(`start_date` as signed) - unix_timestamp()'), $sortOrder);
+        $this->db->sort(DB::raw('cast(`start_date` as signed) - unix_timestamp()'), $sortOrder);
     }
 
-    public function sortTimeLeft($builder, $sortOrder)
+    public function sortTimeLeft($sortOrder)
     {
-        $builder->orderBy(DB::raw('cast(`end_date` as signed) - unix_timestamp()'), $sortOrder);
+        $this->db->sort(DB::raw('cast(`end_date` as signed) - unix_timestamp()'), $sortOrder);
     }
 }

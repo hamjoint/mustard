@@ -24,38 +24,14 @@ namespace Hamjoint\Mustard\Tables;
 use Foundation\Pagination\FoundationFivePresenter;
 use Tablelegs\Table;
 
-class AdminUsers extends Table
+class AdminSettings extends Table
 {
     public $columnHeaders = [
-        'User ID' => 'user_id',
-        'Username' => 'username',
-        'Email' => 'email',
-        'Joined' => 'joined',
-        'Last login' => 'last_login',
+        'Key' => 'key',
+        'Value' => 'value',
     ];
 
-    public $filters = [
-        'Type' => [
-            'Buyer',
-            'Seller',
-        ],
-    ];
-
-    public $defaultSortKey = 'username';
+    public $defaultSortKey = 'key';
 
     public $presenter = FoundationFivePresenter::class;
-
-    public function filterTypeBuyer()
-    {
-        if (!mustard_loaded('commerce')) {
-            return;
-        }
-
-        $this->db->buyers();
-    }
-
-    public function filterTypeSeller()
-    {
-        $this->db->sellers();
-    }
 }
