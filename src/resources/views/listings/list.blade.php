@@ -23,18 +23,18 @@
     </div>
     <div class="medium-9 columns">
         @include('tablelegs::filter')
-        @if ($table->hasRows())
-            @foreach ($table->getRows() as $item)
+        @if (!$table->isEmpty())
+            @foreach ($items as $item)
                 @include('mustard::listings.item')
             @endforeach
-            <div class="row">
-                <div class="medium-12 columns pagination-centered">
-                    {!! $items->getPaginator()->render() !!}
-                </div>
-            </div>
         @else
             <p>We don't have any active items in this category. <a href="/sell">Sell</a> one now!</p>
         @endif
+        <div class="row">
+            <div class="medium-12 columns pagination-centered">
+                {!! $table->paginator() !!}
+            </div>
+        </div>
     </div>
 </div>
 @stop
