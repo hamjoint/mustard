@@ -23,7 +23,11 @@ namespace Hamjoint\Mustard\Http\Controllers;
 
 use Cache;
 use Hamjoint\Mustard\Item;
+use Hamjoint\Mustard\ItemCondition;
+use Hamjoint\Mustard\ListingDuration;
+use Hamjoint\Mustard\Tables\AdminItemConditions;
 use Hamjoint\Mustard\Tables\AdminItems;
+use Hamjoint\Mustard\Tables\AdminListingDurations;
 use Hamjoint\Mustard\Tables\AdminSettings;
 use Hamjoint\Mustard\Tables\AdminUsers;
 use Hamjoint\Mustard\User;
@@ -137,6 +141,36 @@ class AdminController extends Controller
         return view('mustard::admin.items', [
             'table' => $table,
             'items' => $table->paginate(),
+        ]);
+    }
+
+    /**
+     * Return the admin item conditions view.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function getItemConditions()
+    {
+        $table = new AdminItemConditions(ItemCondition::query());
+
+        return view('mustard::admin.item-conditions', [
+            'table' => $table,
+            'item_conditions' => $table->paginate(),
+        ]);
+    }
+
+    /**
+     * Return the admin listing durations view.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function getListingDurations()
+    {
+        $table = new AdminListingDurations(ListingDuration::query());
+
+        return view('mustard::admin.listing-durations', [
+            'table' => $table,
+            'listing_durations' => $table->paginate(),
         ]);
     }
 
