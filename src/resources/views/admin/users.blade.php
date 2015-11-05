@@ -12,11 +12,11 @@
             </div>
             <div class="medium-10 columns">
                 @include('tablelegs::filter')
-                @if ($table->hasRows())
+                @if (!$table->isEmpty())
                     <table class="expand">
                         @include('tablelegs::header')
                         <tbody>
-                            @foreach ($table->getRows() as $user)
+                            @foreach ($users as $user)
                                 <tr>
                                     <td>{{ $user->userId }}</td>
                                     <td>@include('mustard::user.link', ['user' => $user])</td>
@@ -27,14 +27,14 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="row">
-                        <div class="medium-12 columns pagination-centered">
-                            {!! $table->getPaginator()->render() !!}
-                        </div>
-                    </div>
                 @else
-
+                    <p>Nothing found.</p>
                 @endif
+                <div class="row">
+                    <div class="medium-12 columns pagination-centered">
+                        {!! $table->paginator() !!}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

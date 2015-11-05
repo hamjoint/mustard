@@ -4,14 +4,18 @@
         <i class="fa fa-binoculars"></i>
         <label>Watching</label>
     </a>
-    <a class="item {{ Request::is('inventory/bidding') ? 'active' : '' }}" href="/inventory/bidding">
-        <i class="fa fa-thumbs-up"></i>
-        <label>Bidding</label>
-    </a>
-    <a class="item {{ Request::is('inventory/bought') ? 'active' : '' }}" href="/inventory/bought">
-        <i class="fa fa-star"></i>
-        <label>Bought &amp; Won</label>
-    </a>
+    @if (mustard_loaded('auctions'))
+        <a class="item {{ Request::is('inventory/bidding') ? 'active' : '' }}" href="/inventory/bidding">
+            <i class="fa fa-thumbs-up"></i>
+            <label>Bidding</label>
+        </a>
+    @endif
+    @if (mustard_loaded('commerce'))
+        <a class="item {{ Request::is('inventory/bought') ? 'active' : '' }}" href="/inventory/bought">
+            <i class="fa fa-star"></i>
+            <label>Bought &amp; Won</label>
+        </a>
+    @endif
     <a class="item {{ Request::is('inventory/selling') ? 'active' : '' }}" href="/inventory/selling">
         <i class="fa fa-tags"></i>
         <label>Selling</label>
@@ -20,12 +24,19 @@
         <i class="fa fa-clock-o"></i>
         <label>Scheduled</label>
     </a>
-    <a class="item {{ Request::is('inventory/sold') ? 'active' : '' }}" href="/inventory/sold">
-        <i class="fa fa-gavel"></i>
-        <label>Sold</label>
-    </a>
-    <a class="item {{ Request::is('inventory/unsold') ? 'active' : '' }}" href="/inventory/unsold">
-        <i class="fa fa-umbrella"></i>
-        <label>Unsold</label>
-    </a>
+    @if (mustard_loaded('commerce'))
+        <a class="item {{ Request::is('inventory/sold') ? 'active' : '' }}" href="/inventory/sold">
+            <i class="fa fa-gavel"></i>
+            <label>Sold</label>
+        </a>
+        <a class="item {{ Request::is('inventory/unsold') ? 'active' : '' }}" href="/inventory/unsold">
+            <i class="fa fa-umbrella"></i>
+            <label>Unsold</label>
+        </a>
+    @else
+        <a class="item {{ Request::is('inventory/ended') ? 'active' : '' }}" href="/inventory/ended">
+            <i class="fa fa-umbrella"></i>
+            <label>Ended</label>
+        </a>
+    @endif
 </div>

@@ -6,15 +6,13 @@
 
 @section('content')
 <div class="row">
-    @if (mustard_loaded('commerce'))
-        <div class="medium-2 columns">
-            @include('mustard::inventory.nav')
-        </div>
-    @endif
-    <div class="medium-{{ mustard_loaded('commerce') ? 10 : 12 }} columns">
+    <div class="medium-2 columns">
+        @include('mustard::inventory.nav')
+    </div>
+    <div class="medium-10 columns">
         @include('tablelegs::filter')
-        @if ($table->hasRows())
-            @foreach ($table->getRows()->chunk(4) as $chunked_items)
+        @if (!$table->isEmpty())
+            @foreach ($items->chunk(4) as $chunked_items)
                 <div class="row">
                     @foreach ($chunked_items as $item)
                         <div class="medium-3 columns end mosaic {{ $item->isEnded() ? 'ended' : '' }}">
@@ -50,15 +48,14 @@
                     @endforeach
                 </div>
             @endforeach
-            </div>
-            <div class="row">
-                <div class="medium-12 columns pagination-cenetered">
-                    {!! $table->getPaginator()->render() !!}
-                </div>
-            </div>
         @else
-            <p>You aren't currently watching any items. <a href="/buy">Find something to watch</a>!</p>
+            <p>No watched items found. <a href="/buy">Find something to watch</a>!</p>
         @endif
+        <div class="row">
+            <div class="medium-12 columns pagination-centered">
+                {!! $table->paginator() !!}
+            </div>
+        </div>
     </div>
 </div>
 @stop

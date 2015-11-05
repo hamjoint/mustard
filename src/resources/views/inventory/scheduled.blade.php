@@ -10,8 +10,8 @@
         @include('mustard::inventory.nav')
     </div>
     <div class="medium-10 columns">
+        @include('tablelegs::filter')
         @if (!$items->isEmpty())
-            @include('tablelegs::filter')
             <table class="expand">
                 @include('tablelegs::header')
                 <tbody>
@@ -45,14 +45,14 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="row">
-                <div class="medium-12 columns text-center">
-                    {{ $table->paginator() }}
-                </div>
-            </div>
         @else
             <p>You haven't got any items scheduled. <a href="/sell">Sell one now</a>.</p>
         @endif
+        <div class="row">
+            <div class="medium-12 columns text-center">
+                {{ $table->paginator() }}
+            </div>
+        </div>
     </div>
 </div>
 @stop

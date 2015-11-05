@@ -1,29 +1,27 @@
 @extends(config('mustard.views.layout', 'mustard::layouts.master'))
 
 @section('title')
-    Items - Admin
+    Settings - Admin
 @stop
 
 @section('content')
-    <div class="admin-items">
+    <div class="admin-settings">
         <div class="row">
             <div class="medium-2 columns">
                 @include('mustard::admin.fragments.nav')
             </div>
             <div class="medium-10 columns">
-                @include('tablelegs::filter')
                 @if (!$table->isEmpty())
                     <table class="expand">
                         @include('tablelegs::header')
                         <tbody>
-                            @foreach ($items as $item)
-                            <tr>
-                                <td>{{ $item->itemId }}</td>
-                                <td><a href="{{ $item->url }}">{{ $item->name }}</a></td>
-                                <td>@include('mustard::user.link', ['user' => $item->seller])</a></td>
-                                <td>{{ mustard_time($item->getStartingIn(), 2, true) }}</td>
-                                <td>{{ mustard_time($item->getTimeLeft(), 2, true) }}</td>
-                            </tr>
+                            @foreach ($settings as $setting)
+                                <tr>
+                                    <td>{{ $setting->key }}</td>
+                                    <td>
+                                        <pre>{{ $setting->value }}</pre>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
