@@ -274,7 +274,7 @@ class Item extends NonSequentialIdModel
      */
     public function end()
     {
-        if ($this->auction) {
+        if (mustard_loaded('auctions') && $this->auction) {
             $bid = $this->getBidHistory()->first();
 
             if ($bid) $this->winningBid()->associate($bid);
@@ -413,7 +413,7 @@ class Item extends NonSequentialIdModel
      */
     public function deliveryOptions()
     {
-        return $this->hasMany('\Hamjoint\Mustard\Commerce\DeliveryOption');
+        return $this->hasMany('\Hamjoint\Mustard\DeliveryOption');
     }
 
     /**
@@ -463,7 +463,7 @@ class Item extends NonSequentialIdModel
      */
     public function winningBid()
     {
-        return $this->belongsTo('\Hamjoint\Mustard\Auctions\Bid');
+        return $this->belongsTo('\Hamjoint\Mustard\Auctions\Bid', 'winning_bid_id');
     }
 
     /**
@@ -512,9 +512,9 @@ class Item extends NonSequentialIdModel
     {
         $until = $until ?: time();
 
-        return self::join('watched_items', 'watched_items.item_id', '=', 'items.item_id')
-            ->where('added', '>=', $since)
-            ->where('added', '<=', $until)
-            ->count();
+        return self::whereHas('watchers', function ($query) use ($since, $until) {
+            $query->where('added', '>=', $since);
+            $query->where('added', '<=', $until);
+        })->count();
     }
 }
