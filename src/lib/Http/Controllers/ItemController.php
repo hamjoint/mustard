@@ -25,7 +25,7 @@ use Auth;
 use Hamjoint\Mustard\Category;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
-use Hamjoint\Mustard\ItemDuration;
+use Hamjoint\Mustard\ListingDuration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -86,7 +86,7 @@ class ItemController extends Controller
         return view('mustard::item.new', [
             'categories' => $categories,
             'item' => new Item,
-            'item_durations' => ItemDuration::all(),
+            'item_durations' => ListingDuration::all(),
             'item_conditions' => ItemCondition::all(),
             'photos' => $session_photos,
         ]);
