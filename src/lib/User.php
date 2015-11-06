@@ -178,6 +178,16 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     }
 
     /**
+     * Return number of unread messages.
+     *
+     * @return integer
+     */
+    public function getUnreadMessages()
+    {
+        return $this->messages()->received()->unread()->count();
+    }
+
+    /**
      * Scope of buyers.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
@@ -366,7 +376,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     {
         $until = $until ?: time();
 
-        return self::where('joined', '>=', $since)
+        return (int) self::where('joined', '>=', $since)
             ->where('joined', '<=', $until)
             ->count();
     }
@@ -382,7 +392,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     {
         $until = $until ?: time();
 
-        return self::join('bids', 'bids.user_id', '=', 'users.user_id')
+        return (int) self::join('bids')
             ->where('placed', '>=', $since)
             ->where('placed', '<=', $until)
             ->count(\DB::raw('DISTINCT(users.user_id)'));
@@ -399,7 +409,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     {
         $until = $until ?: time();
 
-        return self::join('purchases', 'purchases.user_id', '=', 'users.user_id')
+        return (int) self::join('purchases')
             ->where('created', '>=', $since)
             ->where('created', '<=', $until)
             ->count(\DB::raw('DISTINCT(users.user_id)'));
@@ -416,7 +426,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     {
         $until = $until ?: time();
 
-        return self::join('items', 'items.user_id', '=', 'users.user_id')
+        return (int) self::join('items')
             ->where('created', '>=', $since)
             ->where('created', '<=', $until)
             ->count(\DB::raw('DISTINCT(users.user_id)'));
