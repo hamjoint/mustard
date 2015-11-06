@@ -496,7 +496,7 @@ class Item extends NonSequentialIdModel
     {
         $until = $until ?: time();
 
-        return self::where('created', '>=', $since)
+        return (int) self::where('created', '>=', $since)
             ->where('created', '<=', $until)
             ->count();
     }
@@ -512,7 +512,7 @@ class Item extends NonSequentialIdModel
     {
         $until = $until ?: time();
 
-        return self::whereHas('watchers', function ($query) use ($since, $until) {
+        return (int) self::whereHas('watchers', function ($query) use ($since, $until) {
             $query->where('added', '>=', $since);
             $query->where('added', '<=', $until);
         })->count();
