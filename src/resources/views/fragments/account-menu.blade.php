@@ -1,6 +1,6 @@
 <a>
     <i class="fa fa-bars"></i>  {{ Auth::user()->username }}
-    @if (Auth::user()->getUnreadMessages())
+    @if (mustard_loaded('messaging') && Auth::user()->getUnreadMessages())
         <span class="label alert radius">{{ Auth::user()->getUnreadMessages() }}</span>
     @endif
 </a>
