@@ -13,7 +13,7 @@
             <div class="medium-10 columns">
                 <div class="row">
                     @foreach ($stats as $stat_cat => $stat_groups)
-                        <div class="medium-6 columns end">
+                        <div class="medium-12 columns end">
                             <h2>{{ $stat_cat }}</h2>
                             <table class="expand">
                                 <thead>

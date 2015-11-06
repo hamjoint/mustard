@@ -18,7 +18,7 @@
                         <tbody>
                             @foreach ($listing_durations as $listing_duration)
                                 <tr>
-                                    <td>{{ $listing_duration->listing_duration_id }}</td>
+                                    <td>{{ $listing_duration->listingDurationId }}</td>
                                     <td>{{ $listing_duration->name }}</td>
                                     <td>{{ mustard_time($listing_duration->getDuration()) }}</td>
                                 </tr>

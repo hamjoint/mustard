@@ -18,7 +18,7 @@
                         <tbody>
                             @foreach ($item_conditions as $item_condition)
                                 <tr>
-                                    <td>{{ $item_condition->item_condition_id }}</td>
+                                    <td>{{ $item_condition->itemConditionId }}</td>
                                     <td>{{ $item_condition->name }}</td>
                                 </tr>
                             @endforeach

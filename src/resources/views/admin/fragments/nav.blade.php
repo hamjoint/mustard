@@ -12,6 +12,12 @@
         <i class="fa fa-tags"></i>
         <label>Items</label>
     </a>
+    @if (mustard_loaded('auctions'))
+        <a class="item {{ Request::is('admin/bid-increments') ? 'active' : '' }}" href="/admin/bid-increments">
+            <i class="fa fa-level-up"></i>
+            <label>Bid Increments</label>
+        </a>
+    @endif
     <a class="item {{ Request::is('admin/categories') ? 'active' : '' }}" href="/admin/categories">
         <i class="fa fa-sitemap"></i>
         <label>Categories</label>
