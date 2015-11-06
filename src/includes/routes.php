@@ -54,7 +54,16 @@ Route::group([
         Route::post('item/watch', 'ItemController@postWatch');
         Route::post('item/unwatch', 'ItemController@postUnwatch');
 
-        Route::controller('admin', 'AdminController');
+        Route::get('admin', 'AdminController@getIndex');
+        Route::get('admin/dashboard', 'AdminController@getDashboard');
+        Route::get('admin/items', 'AdminController@getItems');
+        Route::get('admin/categories', 'AdminController@getCategories');
+        Route::get('admin/users', 'AdminController@getUsers');
+        Route::get('admin/item-conditions', 'AdminController@getItemConditions');
+        Route::get('admin/listing-durations', 'AdminController@getListingDurations');
+        Route::get('admin/mailout', 'AdminController@getMailout');
+        Route::post('admin/mailout', 'AdminController@postMailout');
+        Route::get('admin/settings', 'AdminController@getSettings');
     });
 
     Route::get('buy', ['uses' => 'ListingController@getIndex']);
