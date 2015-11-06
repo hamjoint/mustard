@@ -56,21 +56,45 @@ class AdminController extends Controller
             'Item stats' => [
                 'Listed' => function($range)
                 {
-                    return mustard_number(Item::totalListed($range));
+                    return mustard_number(Cache::remember(
+                        'total_items',
+                        config('mustard.dashboard_cache'),
+                        function() use ($range) {
+                            return Item::totalListed($range);
+                        }
+                    ));
                 },
                 'Watched' => function($range)
                 {
-                    return mustard_number(Item::totalWatched($range));
+                    return mustard_number(Cache::remember(
+                        'total_items',
+                        config('mustard.dashboard_cache'),
+                        function() use ($range) {
+                            return Item::totalWatched($range);
+                        }
+                    ));
                 },
             ],
             'User stats' => [
                 'Registered' => function($range)
                 {
-                    return mustard_number(User::totalRegistered($range));
+                    return mustard_number(Cache::remember(
+                        'total_users',
+                        config('mustard.dashboard_cache'),
+                        function() use ($range) {
+                            return User::totalRegistered($range);
+                        }
+                    ));
                 },
                 'Sellers' => function($range)
                 {
-                    return mustard_number(User::totalSellers($range));
+                    return mustard_number(Cache::remember(
+                        'total_sellers',
+                        config('mustard.dashboard_cache'),
+                        function() use ($range) {
+                            return User::totalSellers($range);
+                        }
+                    ));
                 },
             ],
         ];
@@ -78,34 +102,70 @@ class AdminController extends Controller
         if (mustard_loaded('auctions')) {
             $stats['User stats']['Bidders'] = function($range)
             {
-                return mustard_number(User::totalBidders($range));
+                return mustard_number(Cache::remember(
+                    'total_bidders',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return User::totalBidders($range);
+                    }
+                ));
             };
 
             $stats['Item stats']['Bids placed'] = function($range)
             {
-                return mustard_number(\Hamjoint\Mustard\Auctions\Bid::totalPlaced($range));
+                return mustard_number(Cache::remember(
+                    'total_bids_placed',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return \Hamjoint\Mustard\Auctions\Bid::totalPlaced($range);
+                    }
+                ));
             };
 
             $stats['Item stats']['Average bid amount'] = function($range)
             {
-                return mustard_price(\Hamjoint\Mustard\Auctions\Bid::averageAmount($range));
+                return mustard_price(Cache::remember(
+                    'average_bids',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return \Hamjoint\Mustard\Auctions\Bid::averageAmount($range);
+                    }
+                ));
             };
         }
 
         if (mustard_loaded('commerce')) {
             $stats['User stats']['Buyers'] = function($range)
             {
-                return mustard_number(User::totalBuyers($range));
+                return mustard_number(Cache::remember(
+                    'total_buyers',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return User::totalBuyers($range);
+                    }
+                ));
             };
 
             $stats['Transaction stats']['Purchases'] = function($range)
             {
-                return mustard_number(\Hamjoint\Mustard\Commerce\Purchase::totalCreated($range));
+                return mustard_number(Cache::remember(
+                    'total_purchases',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return \Hamjoint\Mustard\Commerce\Purchase::totalCreated($range);
+                    }
+                ));
             };
 
             $stats['Transaction stats']['Average amount'] = function($range)
             {
-                return mustard_price(\Hamjoint\Mustard\Commerce\Purchase::averageAmount($range));
+                return mustard_price(Cache::remember(
+                    'average_purchases',
+                    config('mustard.dashboard_cache'),
+                    function() use ($range) {
+                        return \Hamjoint\Mustard\Commerce\Purchase::averageAmount($range);
+                    }
+                ));
             };
         }
 
