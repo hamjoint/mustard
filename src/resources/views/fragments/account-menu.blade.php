@@ -5,7 +5,7 @@
     @if (mustard_loaded('messaging'))
         <li><a href="/messages"><i class="fa fa-inbox"></i> Messages</a></li>
     @endif
-    <li><a href="/account"><i class="fa fa-wrench"></i> Account settings</a></li>
+    <li><a href="/account"><i class="fa fa-sliders"></i> Account settings</a></li>
     <li><a href="/account/close"><i class="fa fa-eject"></i> Close account</a></li>
     <li><a href="/auth/logout"><i class="fa fa-sign-out"></i> Log out</a></li>
 </ul>

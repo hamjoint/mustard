@@ -1,5 +1,5 @@
 <header>
-    <nav class="top-bar" data-topbar role="navigation">
+    <nav class="top-bar" data-topbar>
         <ul class="title-area">
             <li class="name">
                 <h1><a href="/">Mustard</a></h1>
