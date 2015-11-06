@@ -148,20 +148,6 @@ class AccountController extends Controller
     }
 
     /**
-     * Return account contacts view.
-     *
-     * @return \Illuminate\View\View
-     */
-    public function getContacts(Request $request)
-    {
-        $acquaintances = Auth::user()->getAcquaintances();
-
-        return view('mustard::account.contacts', [
-            'acquaintances' => new Paginator($acquaintances, $acquaintances->count(), config('per_page', 25)),
-        ]);
-    }
-
-    /**
      * Return account notifications view.
      *
      * @return \Illuminate\View\View

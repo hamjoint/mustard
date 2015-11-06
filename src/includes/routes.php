@@ -14,7 +14,6 @@ Route::group([
         Route::post('account/password', 'AccountController@postPassword');
         Route::get('account/email', 'AccountController@getEmail');
         Route::post('account/email', 'AccountController@postEmail');
-        Route::get('account/contacts', 'AccountController@getContacts');
         Route::get('account/notifications', 'AccountController@getNotifications');
         Route::post('account/notifications', 'AccountController@postNotifications');
         Route::get('account/close', 'AccountController@getClose');
