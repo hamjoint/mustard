@@ -41,7 +41,7 @@ class InventoryController extends Controller
     }
 
     /**
-     * Return the inventory watching view.
+     * Return the inventory watching items view.
      *
      * @return \Illuminate\View\View
      */
@@ -55,6 +55,11 @@ class InventoryController extends Controller
         ]);
     }
 
+    /**
+     * Return the inventory selling items view.
+     *
+     * @return \Illuminate\View\View
+     */
     public function getSelling()
     {
         $items = Auth::user()->items()->active();
@@ -67,6 +72,11 @@ class InventoryController extends Controller
         ]);
     }
 
+    /**
+     * Return the inventory scheduled items view.
+     *
+     * @return \Illuminate\View\View
+     */
     public function getScheduled()
     {
         $items = Auth::user()->items()->scheduled();
@@ -79,6 +89,11 @@ class InventoryController extends Controller
         ]);
     }
 
+    /**
+     * Return the inventory ended items view.
+     *
+     * @return \Illuminate\View\View
+     */
     public function getEnded()
     {
         $items = Auth::user()->items()->where('end_date', '<', time());
