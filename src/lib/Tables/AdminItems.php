@@ -27,6 +27,11 @@ use Tablelegs\Table;
 
 class AdminItems extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Item ID' => 'item_id',
         'Name' => 'name',
@@ -35,6 +40,11 @@ class AdminItems extends Table
         'Time left' => 'time_left',
     ];
 
+    /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
     public $filters = [
         'State' => [
             'Ended',
@@ -47,35 +57,75 @@ class AdminItems extends Table
         ],
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'time_left';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Include ended items only.
+     *
+     * @return void
+     */
     public function filterStateEnded()
     {
         $this->db->ended();
     }
 
+    /**
+     * Include active items only.
+     *
+     * @return void
+     */
     public function filterStateActive()
     {
         $this->db->active();
     }
 
+    /**
+     * Include scheduled items only.
+     *
+     * @return void
+     */
     public function filterStateScheduled()
     {
         $this->db->scheduled();
     }
 
+    /**
+     * Include auction-type items only.
+     *
+     * @return void
+     */
     public function filterTypeAuction()
     {
         $this->db->typeAuction();
     }
 
+    /**
+     * Include fixed-type items only.
+     *
+     * @return void
+     */
     public function filterTypeFixed()
     {
         $this->db->typeFixed();
     }
 
+    /**
+     * Sort by sellers' usernames.
+     *
+     * @return void
+     */
     public function sortSeller($sortOrder)
     {
         $this->db->join('users', 'items.user_id', '=', 'users.user_id');
@@ -83,11 +133,21 @@ class AdminItems extends Table
         $this->db->sort('users.username', $sortOrder);
     }
 
+    /**
+     * Sort by time until item starts.
+     *
+     * @return void
+     */
     public function sortStartingIn($sortOrder)
     {
         $this->db->sort(DB::raw('cast(`start_date` as signed) - unix_timestamp()'), $sortOrder);
     }
 
+    /**
+     * Sort by time until item ended.
+     *
+     * @return void
+     */
     public function sortTimeLeft($sortOrder)
     {
         $this->db->sort(DB::raw('cast(`end_date` as signed) - unix_timestamp()'), $sortOrder);

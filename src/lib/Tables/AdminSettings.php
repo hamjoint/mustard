@@ -26,12 +26,27 @@ use Tablelegs\Table;
 
 class AdminSettings extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Key' => 'key',
         'Value' => 'value',
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'key';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 }

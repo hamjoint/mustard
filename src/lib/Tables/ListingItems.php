@@ -26,6 +26,11 @@ use Tablelegs\Table;
 
 class ListingItems extends Table
 {
+    /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
     public $filters = [
         'Type' => [
             'Auction',
@@ -33,15 +38,35 @@ class ListingItems extends Table
         ],
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'end_date';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Include auction-type items only.
+     *
+     * @return void
+     */
     public function filterTypeAuction()
     {
         $this->db->TypeAuction();
     }
 
+    /**
+     * Include fixed-type items only.
+     *
+     * @return void
+     */
     public function filterTypeFixed()
     {
         $this->db->TypeFixed();

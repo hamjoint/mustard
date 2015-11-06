@@ -27,6 +27,11 @@ use Tablelegs\Table;
 
 class InventorySelling extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Item ID' => 'item_id',
         'Name' => 'name',
@@ -36,12 +41,32 @@ class InventorySelling extends Table
         'Options' => null,
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'time_ended';
 
+    /**
+     * Default sort order.
+     *
+     * @var string
+     */
     public $defaultSortOrder = 'desc';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Sort by time since item ended.
+     *
+     * @return void
+     */
     public function sortTimeEnded($sortOrder)
     {
         $this->db->orderBy(DB::raw('unix_timestamp() - cast(`end_date` as signed)'), $sortOrder);

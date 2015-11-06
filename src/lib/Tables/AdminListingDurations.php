@@ -26,11 +26,21 @@ use Tablelegs\Table;
 
 class AdminListingDurations extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Listing Duration ID' => 'listing_duration_id',
         'Name' => 'name',
         'Duration' => 'duration',
     ];
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 }

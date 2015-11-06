@@ -26,6 +26,11 @@ use Tablelegs\Table;
 
 class AdminUsers extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'User ID' => 'user_id',
         'Username' => 'username',
@@ -34,6 +39,11 @@ class AdminUsers extends Table
         'Last login' => 'last_login',
     ];
 
+    /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
     public $filters = [
         'Type' => [
             'Buyer',
@@ -41,10 +51,25 @@ class AdminUsers extends Table
         ],
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'username';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Include users with purchases only.
+     *
+     * @return void
+     */
     public function filterTypeBuyer()
     {
         if (!mustard_loaded('commerce')) {
@@ -54,6 +79,11 @@ class AdminUsers extends Table
         $this->db->buyers();
     }
 
+    /**
+     * Include users with items only.
+     *
+     * @return void
+     */
     public function filterTypeSeller()
     {
         $this->db->sellers();

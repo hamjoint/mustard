@@ -26,10 +26,20 @@ use Tablelegs\Table;
 
 class AdminItemConditions extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Item Condition ID' => 'item_condition_id',
         'Name' => 'name',
     ];
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 }

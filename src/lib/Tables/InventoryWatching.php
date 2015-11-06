@@ -27,6 +27,11 @@ use Tablelegs\Table;
 
 class InventoryWatching extends Table
 {
+    /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
     public $filters = [
         'Status' => [
             'Active',
@@ -34,20 +39,45 @@ class InventoryWatching extends Table
         ],
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'time_ended';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Include active items only.
+     *
+     * @return void
+     */
     public function filterStatusActive()
     {
         $this->db->active();
     }
 
+    /**
+     * Include ended items only.
+     *
+     * @return void
+     */
     public function filterStatusEnded()
     {
         $this->db->ended();
     }
 
+    /**
+     * Sort by time since item ended.
+     *
+     * @return void
+     */
     public function sortTimeEnded($sortOrder)
     {
         $this->db->orderBy(DB::raw('unix_timestamp() - cast(`end_date` as signed)'), $sortOrder);

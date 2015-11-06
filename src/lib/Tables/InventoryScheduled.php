@@ -27,6 +27,11 @@ use Tablelegs\Table;
 
 class InventoryScheduled extends Table
 {
+    /**
+     * Column headers for the table. URL-friendly keys with human values.
+     *
+     * @var array
+     */
     public $columnHeaders = [
         'Item ID' => 'item_id',
         'Name' => 'name',
@@ -36,10 +41,25 @@ class InventoryScheduled extends Table
         'Options' => null,
     ];
 
+    /**
+     * Default key to sort by.
+     *
+     * @var string
+     */
     public $defaultSortKey = 'starting_in';
 
+    /**
+     * Class name for the paginator presenter.
+     *
+     * @var string
+     */
     public $presenter = FoundationFivePresenter::class;
 
+    /**
+     * Sort by time until item starts.
+     *
+     * @return void
+     */
     public function sortStartingIn($sortOrder)
     {
         $this->db->sort(DB::raw('cast(`start_date` as signed) - unix_timestamp()'), $sortOrder);
