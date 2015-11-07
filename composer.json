@@ -19,6 +19,7 @@
         "pda/pheanstalk": "^3.0",
         "erusev/parsedown": "^1.5",
         "tjbp/tablelegs": "@dev",
+        "tjbp/countries": "@dev",
         "dansmith/laravel5-foundation": "^0.3"
     },
     "require-dev": {
