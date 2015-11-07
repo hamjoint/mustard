@@ -106,7 +106,7 @@ class Category extends Model
         $descendants = $this->children;
 
         foreach ($this->children as $child) {
-            $descendants->merge($child->getDescendants());
+            $descendants = $descendants->merge($child->getDescendants());
         }
 
         return $descendants;

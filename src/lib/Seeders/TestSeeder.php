@@ -238,9 +238,7 @@ class TestSeeder extends Seeder
 
             // Add to categories
             for ($ii = 0; $ii < mt_rand(1, 3); $ii++) {
-                $category = Category::has('children', 0)
-                    ->get()
-                    ->random();
+                $category = Category::leaves()->get()->random();
 
                 try {
                     $item->categories()->save($category);

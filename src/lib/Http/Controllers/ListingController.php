@@ -35,26 +35,26 @@ class ListingController extends Controller
      */
     public function getIndex(Request $request, $path = null)
     {
-        $items_builder = Item::active();
+        $items = Item::active();
 
         if ($request->input('q')) {
-            $items_builder->keywords($request->input('q'));
+            $items->keywords($request->input('q'));
         }
 
+        // Handle root
         if (is_null($path)) {
-            $items = $items_builder;
-
             $category = null;
         } else {
             $tree = explode('/', $path);
 
-            $items = $items_builder
-                ->whereHas('categories', function($query) use ($tree)
-                {
-                    $query->whereIn('slug', $tree);
-                });
-
             $category = Category::findBySlug(array_slice($tree, -1)[0]);
+
+            $items->whereHas('categories', function ($query) use ($category) {
+                $query->whereIn(
+                    'categories.category_id',
+                    array_merge($category->getDescendantIds(), [$category->getKey()])
+                );
+            });
         }
 
         $table = new ListingItems($items, $request);
