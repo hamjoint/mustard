@@ -47,12 +47,6 @@ class MustardServiceProvider extends ServiceProvider
 
         // Merge config
         $this->mergeConfigFrom(__DIR__ . '/../../includes/config.php', 'mustard');
-
-        // Require helpers
-        require __DIR__ . '/../../includes/helpers.php';
-
-        // Require validators
-        require __DIR__ . '/../../includes/validators.php';
     }
 
     /**
