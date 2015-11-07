@@ -42,6 +42,18 @@ class InventorySelling extends Table
     ];
 
     /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
+    public $filters = [
+        'Type' => [
+            'Auction',
+            'Fixed',
+        ],
+    ];
+
+    /**
      * Default key to sort by.
      *
      * @var string

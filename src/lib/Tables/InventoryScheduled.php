@@ -42,6 +42,18 @@ class InventoryScheduled extends Table
     ];
 
     /**
+     * Array of filter names containing available options and their keys.
+     *
+     * @var array
+     */
+    public $filters = [
+        'Type' => [
+            'Auction',
+            'Fixed',
+        ],
+    ];
+
+    /**
      * Default key to sort by.
      *
      * @var string
@@ -54,6 +66,26 @@ class InventoryScheduled extends Table
      * @var string
      */
     public $presenter = FoundationFivePresenter::class;
+
+    /**
+     * Include auction-type items only.
+     *
+     * @return void
+     */
+    public function filterTypeAuction()
+    {
+        $this->db->typeAuction();
+    }
+
+    /**
+     * Include fixed-type items only.
+     *
+     * @return void
+     */
+    public function filterTypeFixed()
+    {
+        $this->db->typeFixed();
+    }
 
     /**
      * Sort by time until item starts.
