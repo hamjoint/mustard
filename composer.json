@@ -31,8 +31,7 @@
             "Hamjoint\\Mustard\\": "src/lib/"
         },
         "files": [
-            "src/includes/helpers.php",
-            "src/includes/validators.php"
+            "src/includes/helpers.php"
         ]
     }
 }
