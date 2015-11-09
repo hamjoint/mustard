@@ -32,9 +32,9 @@ class ListingItems extends Table
      * @var array
      */
     public $filters = [
-        'Type' => [
-            'Auction',
-            'Fixed'
+        'Has' => [
+            'No bids',
+            'Fixed price'
         ],
     ];
 
@@ -57,9 +57,9 @@ class ListingItems extends Table
      *
      * @return void
      */
-    public function filterTypeAuction()
+    public function filterHasNoBids()
     {
-        $this->db->TypeAuction();
+        $this->db->TypeAuction()->has('bids', 0);
     }
 
     /**
@@ -67,8 +67,8 @@ class ListingItems extends Table
      *
      * @return void
      */
-    public function filterTypeFixed()
+    public function filterHasFixedPrice()
     {
-        $this->db->TypeFixed();
+        $this->db->where('fixed_price', '>', 0);
     }
 }
