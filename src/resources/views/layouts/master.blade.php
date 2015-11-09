@@ -94,6 +94,12 @@
         @else
             @include('mustard::fragments.header')
         @endif
+        @if ($errors->any())
+            @include('mustard::fragments.errors')
+        @endif
+        @if (isset($sessage) || $sessage = session('message'))
+            @include('mustard::fragments.sessage')
+        @endif
         <main>
             @yield('content')
         </main>

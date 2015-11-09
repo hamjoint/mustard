@@ -49,10 +49,4 @@
             </ul>
         </section>
     </nav>
-    @if ($errors->any())
-        @include('mustard::fragments.errors')
-    @endif
-    @if (isset($sessage) || $sessage = session('message'))
-        @include('mustard::fragments.sessage')
-    @endif
 </header>
