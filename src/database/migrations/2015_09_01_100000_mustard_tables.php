@@ -19,6 +19,8 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+use Hamjoint\Mustard\ItemCondition;
+use Hamjoint\Mustard\ListingDuration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -68,7 +70,6 @@ class MustardTables extends Migration
         Schema::create('listing_durations', function(Blueprint $table)
         {
             $table->mediumInteger('listing_duration_id', true)->unsigned();
-            $table->string('name', 64);
             $table->integer('duration')->unsigned();
         });
 
@@ -141,6 +142,37 @@ class MustardTables extends Migration
             $table->foreign('item_id')->references('item_id')->on('items');
             $table->foreign('user_id')->references('user_id')->on('users');
         });
+
+        $conditions = [
+            'New',
+            'Used',
+            'Refurbished',
+            'Faulty / Spares',
+        ];
+
+        foreach ($conditions as $condition) {
+            $item_condition = new ItemCondition;
+
+            $item_condition->name = $condition;
+
+            $item_condition->save();
+        }
+
+        $durations = [
+            86400,
+            86400 * 3,
+            86400 * 7,
+            86400 * 14,
+            86400 * 28,
+        ];
+
+        foreach ($durations as $duration) {
+            $listing_duration = new ListingDuration;
+
+            $listing_duration->duration = $duration;
+
+            $listing_duration->save();
+        }
     }
 
     /**
