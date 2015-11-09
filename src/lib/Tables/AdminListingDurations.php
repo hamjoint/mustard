@@ -33,7 +33,6 @@ class AdminListingDurations extends Table
      */
     public $columnHeaders = [
         'Listing Duration ID' => 'listing_duration_id',
-        'Name' => 'name',
         'Duration' => 'duration',
     ];
 
