@@ -21,6 +21,7 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard;
 
+use Cache;
 use Illuminate\Support\Collection;
 
 class Category extends Model
@@ -120,6 +121,19 @@ class Category extends Model
     public function getDescendantIds()
     {
         return array_pluck($this->getDescendants(), 'category_id');
+    }
+
+    public function getItemCount()
+    {
+        return Cache::remember('category_item_count_' . $this->getKey(), 1, function () {
+            $count = $this->items()->active()->count();
+
+            $this->getDescendants()->each(function ($descendant) use (&$count) {
+                $count += $descendant->items()->active()->count();
+            });
+
+            return $count;
+        });
     }
 
     /**

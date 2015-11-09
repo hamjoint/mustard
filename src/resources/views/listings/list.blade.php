@@ -19,7 +19,7 @@
 </div>
 <div class="row">
     <div class="medium-3 columns">
-        @include('mustard::listings.nav')
+        @include('mustard::listings.nav', ['root' => true])
     </div>
     <div class="medium-9 columns">
         @include('tablelegs::filter')
