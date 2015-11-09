@@ -23,7 +23,7 @@
                             @if (mustard_loaded('auctions') && $item->auction)
                                 <td style="white-space:nowrap;">
                                     <strong>Bids:</strong> {{ $item->bids->count() }}<br />
-                                    <strong>Current price:</strong> {{ mustard_price($item->biddingPrice) }}
+                                    <strong>Current price:</strong> {{ mustard_price($item->biddingPrice) }}<br />
                                     @if ($item->hasReserve())
                                         <strong>Reserve price:</strong> {{ mustard_price($item->reservePrice) }}
                                     @endif
