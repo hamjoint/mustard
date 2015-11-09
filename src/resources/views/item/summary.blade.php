@@ -4,6 +4,11 @@
     {{ $item->name }}
 @stop
 
+@section('item-description')
+    <h2>Description</h2>
+    {!! mustard_markdown($item->description) !!}
+@stop
+
 @section('content')
     <div class="item">
         <div class="row">
@@ -59,21 +64,27 @@
             @endif
         </div>
         <div class="row">
-            <div class="medium-6 columns gallery">
-                <div class="gallery-display">
-                    @foreach ($photos as $photo)
-                        <div><img src="{{ $photo->largeUrl }}" /></div>
-                    @endforeach
-                    @if (!$photos->count())
-                        <div><img src="{{ public_path() . '/images/no-photo.gif' }}" /></div>
-                    @endif
+            @if (mustard_loaded('media'))
+                <div class="medium-6 columns gallery">
+                    <div class="gallery-display">
+                        @foreach ($photos as $photo)
+                            <div><img src="{{ $photo->largeUrl }}" /></div>
+                        @endforeach
+                        @if (!$photos->count())
+                            <div><img src="{{ public_path() . '/images/no-photo.gif' }}" /></div>
+                        @endif
+                    </div>
+                    <div class="gallery-nav">
+                        @foreach ($photos as $photo)
+                            <div><img src="{{ $photo->smallUrl }}" /></div>
+                        @endforeach
+                    </div>
                 </div>
-                <div class="gallery-nav">
-                    @foreach ($photos as $photo)
-                        <div><img src="{{ $photo->smallUrl }}" /></div>
-                    @endforeach
+            @else
+                <div class="medium-6 columns">
+                    @yield('item-description')
                 </div>
-            </div>
+            @endif
             <div class="medium-3 columns">
                 <ul class="pricing-table">
                     @if (mustard_loaded('auctions') && $item->auction)
@@ -146,28 +157,31 @@
                 </ul>
             </div>
             <div class="medium-3 columns">
-                <h3>Seller</h3>
+                <h2>Seller</h2>
                 @include('mustard::user.link', ['user' => $item->seller])
-            </div>
-        </div>
-        <div class="row">
-            <h2 class="medium-12 columns">Description</h2>
-            <div class="medium-12 columns">{!! mustard_markdown($item->description) !!}</div>
-        </div>
-        <div class="row">
-            <h2 class="medium-12 columns">Payment options</h2>
-            <div class="medium-12 columns">
-                <ul>
-                    <li>Debit or credit card (Visa, MasterCard or American Express)</li>
+                <h2>Payment options</h2>
+                <ul class="no-bullet">
+                    <li>
+                        <i class="fa fa-3x fa-cc-visa"></i>
+                        <i class="fa fa-3x fa-cc-mastercard"></i>
+                        <i class="fa fa-3x fa-cc-amex"></i>
+                    </li>
                     @if ($item->paymentOther)
                         <li>Cash on collection</li>
                     @endif
                 </ul>
             </div>
         </div>
+        @if (mustard_loaded('media'))
+            <div class="row">
+                <div class="medium-12 columns">
+                    @yield('item-description')
+                </div>
+            </div>
+        @endif
         <div class="row">
-            <h2 class="medium-12 columns">Delivery options</h2>
             <div class="medium-12 columns">
+                <h2>Delivery options</h2>
                 <table class="expand">
                     <thead>
                         <tr>
@@ -196,8 +210,8 @@
             </div>
         </div>
         <div class="row">
-            <h2 class="medium-12 columns">Returns</h2>
             <div class="medium-12 columns">
+                <h2>Returns</h2>
                 @if ($item->returnsPeriod)
                     Returns are accepted up to {{ mustard_number($item->returnsPeriod, 0) }} days from the date of delivery, as long as the item is in its original condition.
                 @else
