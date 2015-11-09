@@ -316,8 +316,10 @@ class Item extends NonSequentialIdModel
      */
     public function scopeKeywords($query, $keyword)
     {
-        return $query->where('name', 'LIKE', "%$keyword%")
+        return $query->where(function ($query) use ($keyword) {
+            $query->where('name', 'LIKE', "%$keyword%")
             ->orWhere('description', 'LIKE', "%$keyword%");
+        });
     }
 
     /**
