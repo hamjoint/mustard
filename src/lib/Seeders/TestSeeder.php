@@ -116,6 +116,10 @@ class TestSeeder extends Seeder
 
         $this->now = time();
 
+        $this->itemConditions = ItemCondition::all();
+
+        $this->listingDurations = ListingDuration::all();
+
         $this->command->info('Adding categories');
 
         for ($i = 1; $i <= self::TOTAL_CATEGORIES; $i++) {
@@ -183,38 +187,13 @@ class TestSeeder extends Seeder
             }
         }
 
-        $this->command->info('Adding item conditions');
-
-        for ($i = 1; $i <= 10; $i++) {
-            $item_condition = new ItemCondition;
-
-            $item_condition->name = $this->faker->word;
-
-            $item_condition->save();
-
-            $this->itemConditions[] = $item_condition;
-        }
-
-        $this->command->info('Adding listing durations');
-
-        for ($i = 1; $i <= 5; $i++) {
-            $listing_duration = new ListingDuration;
-
-            $listing_duration->duration = mt_rand(1, 14) * 86400;
-            $listing_duration->name = $listing_duration->duration / 86400 . ' days';
-
-            $listing_duration->save();
-
-            $this->listingDurations[] = $listing_duration;
-        }
-
         $this->command->info('Adding items');
 
         for ($i = 1; $i <= self::TOTAL_ITEMS; $i++) {
             $item = new Item;
 
             $item->seller()->associate(mt_rand_arr($this->users));
-            $item->condition()->associate(mt_rand_arr($this->itemConditions));
+            $item->condition()->associate($this->itemConditions->random());
 
             $item->name = implode(' ', $this->faker->words(mt_rand(2, 5)));
             $item->description = implode("\n\n", $this->faker->paragraphs(2));
@@ -226,7 +205,7 @@ class TestSeeder extends Seeder
                 ? $item->startPrice + mt_rand(50, 500000) / 100
                 : 0;
             $item->commission = 0.07;
-            $item->duration = mt_rand_arr($this->listingDurations)->duration;
+            $item->duration = $this->listingDurations->random()->duration;
             $item->created = mt_rand($item->seller->joined, $this->now);
             $item->startDate = mt_rand($item->created, $this->now + 86400 * 14);
             $item->endDate = $item->getEndDate();
