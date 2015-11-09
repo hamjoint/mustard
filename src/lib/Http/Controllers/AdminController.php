@@ -22,9 +22,12 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 namespace Hamjoint\Mustard\Http\Controllers;
 
 use Cache;
+use DB;
+use Hamjoint\Mustard\Category;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
 use Hamjoint\Mustard\ListingDuration;
+use Hamjoint\Mustard\Tables\AdminCategories;
 use Hamjoint\Mustard\Tables\AdminItemConditions;
 use Hamjoint\Mustard\Tables\AdminItems;
 use Hamjoint\Mustard\Tables\AdminListingDurations;
@@ -180,6 +183,28 @@ class AdminController extends Controller
         return view('mustard::admin.dashboard', [
             'ranges' => $ranges,
             'stats' => $stats,
+        ]);
+    }
+
+    /**
+     * Return the admin categories view.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function getCategories()
+    {
+        $categories = Category::query()
+            ->leftJoin('items')
+            ->addSelect(DB::raw('COUNT(items.item_id) as item_count'))
+            ->groupBy('categories.category_id');
+
+        $table = new AdminCategories($categories);
+
+        $table->with('parent');
+
+        return view('mustard::admin.categories', [
+            'table' => $table,
+            'categories' => $table->paginate(),
         ]);
     }
 
