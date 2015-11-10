@@ -21,10 +21,12 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard;
 
-use Hamjoint\Mustard\Database\Eloquent\Builder;
+use EloquentJoins\ModelTrait as EloquentJoinsModelTrait;
 
 abstract class Model extends \Illuminate\Database\Eloquent\Model
 {
+    use EloquentJoinsModelTrait;
+
     /**
      * Indicates if the model should be timestamped.
      *
@@ -65,15 +67,6 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
         if (method_exists($this, $key)) {
             return $this->getRelationshipFromMethod($key);
         }
-    }
-
-    /**
-     * Create a new Eloquent query builder for the model. We override this method
-     * from the parent to extend Eloquent.
-     */
-    public function newEloquentBuilder($query)
-    {
-        return new Builder($query);
     }
 
     /**
