@@ -7,8 +7,8 @@
         <meta name="description" content="{{ config('mustard.meta.description', 'The open source market platform.') }}" />
         <meta name="keywords" content="{{ !empty($keywords) ? implode(',', $keywords) : '' }}" />
         @include('mustard::fragments.favicons')
-        <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/normalize.min.css" rel="stylesheet" type="text/css">
-        <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.2/css/foundation.min.css" rel="stylesheet" type="text/css">
+        <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/normalize.min.css" rel="stylesheet" type="text/css">
+        <link href="//cdnjs.cloudflare.com/ajax/libs/foundation/5.5.3/css/foundation.min.css" rel="stylesheet" type="text/css">
         <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <link href="//cdnjs.cloudflare.com/ajax/libs/foundation-datepicker/1.4.0/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
         <link href="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/basic.min.css" rel="stylesheet" type="text/css">
