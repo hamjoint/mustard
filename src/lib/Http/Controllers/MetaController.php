@@ -26,12 +26,16 @@ use Hamjoint\Mustard\Item;
 class MetaController extends Controller
 {
     /**
-     * Redirect index requests to the listings page.
+     * Redirect index requests or return view.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function getIndex()
     {
-        return mustard_redirect('/buy');
+        $front_page = config('mustard.front_page', '/buy');
+
+        return view()->exists(config('mustard.front_page'))
+            ? view(config('mustard.front_page'))
+            : mustard_redirect(config('mustard.front_page'));
     }
 }

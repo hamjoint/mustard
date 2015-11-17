@@ -20,5 +20,5 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 return [
-
+    'front_page' => '/buy',
 ];
