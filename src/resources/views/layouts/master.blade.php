@@ -80,6 +80,10 @@
                 padding: 0.5rem 1rem;
             }
 
+            .listings-item {
+                margin-bottom: 16px !important;
+            }
+
             td > input[type="file"],
             td > input[type="checkbox"],
             td > input[type="radio"],

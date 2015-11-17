@@ -1,7 +1,7 @@
 <div class="row listings-item">
     @if (mustard_loaded('media'))
         <div class="small-2 columns">
-            <a href="{{ $item->url }}"><img src="{{ $item->getListingPhoto()->smallUrl }}" /></a>
+            <a href="{{ $item->url }}"><img src="{{ $item->getListingPhoto()->urlSmall }}" /></a>
         </div>
     @endif
     <div class="small-{{ mustard_loaded('media') ? 7 : 9 }} columns">

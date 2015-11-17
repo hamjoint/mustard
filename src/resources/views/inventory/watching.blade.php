@@ -19,7 +19,7 @@
                             <div class="image">
                                 <a href="{{ $item->url }}">
                                     @if (mustard_loaded('media'))
-                                        <img src="{{ $item->getListingPhoto()->smallUrl }}" alt="" />
+                                        <img src="{{ $item->getListingPhoto()->urlSmall }}" alt="" />
                                     @endif
                                 </a>
                                 <form method="post" action="/item/unwatch">

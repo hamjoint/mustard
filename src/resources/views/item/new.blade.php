@@ -11,9 +11,11 @@
         </div>
         <div class="row">
             <div class="medium-12 columns">
-                <form method="post" action="/item/add-photos" class="photos" enctype="multipart/form-data">
-                    {!! csrf_field() !!}
-                </form>
+                @if (mustard_loaded('media'))
+                    <form method="post" action="/item/add-photos" class="photos" enctype="multipart/form-data">
+                        {!! csrf_field() !!}
+                    </form>
+                @endif
                 <form method="post" action="/item/new" id="new-item" data-abide="true">
                     {!! csrf_field() !!}
                     <fieldset>
@@ -39,25 +41,27 @@
                                 <small class="error">Please choose a condition for your item.</small>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="medium-12 columns fallback">
-                                <label>Photos
-                                    <input type="file" name="photos[]" multiple />
-                                </label>
-                            </div>
-                            <div class="medium-2 columns">
-                                <label>Photos</label>
-                                <button type="button" class="button small expand radius dropzone-target">Choose</button>
-                            </div>
-                            <div class="medium-10 columns">
-                                <div class="dropzone dropzone-previews"></div>
-                                <div class="dropzone dropzone-existing">
-                                    @foreach ($photos as $photo)
-                                    <div data-filename="{{ $photo->photoId }}" data-filesize="{{ $photo->filesize }}" data-filepath="{{ $photo->urlSmall }}"></div>
-                                    @endforeach
+                        @if (mustard_loaded('media'))
+                            <div class="row">
+                                <div class="medium-12 columns fallback">
+                                    <label>Photos
+                                        <input type="file" name="photos[]" multiple />
+                                    </label>
+                                </div>
+                                <div class="medium-2 columns">
+                                    <label>Photos</label>
+                                    <button type="button" class="button small expand radius dropzone-target">Choose</button>
+                                </div>
+                                <div class="medium-10 columns">
+                                    <div class="dropzone dropzone-previews"></div>
+                                    <div class="dropzone dropzone-existing">
+                                        @foreach ($photos as $photo)
+                                        <div data-filename="{{ $photo->photoId }}" data-filesize="{{ $photo->filesize }}" data-filepath="{{ $photo->urlSmall }}"></div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="row">
                             <div class="medium-12 columns">
                                 <label>Description
@@ -156,8 +160,8 @@
                                     <div class="medium-4 columns">
                                         <label>How long should the auction run for?
                                             <select name="duration">
-                                                @foreach ($item_durations as $item_duration)
-                                                    <option value="{{ $item_duration->duration }}">{{ $item_duration->name }}</option>
+                                                @foreach ($listing_durations as $listing_duration)
+                                                    <option value="{{ $listing_duration->duration }}">{{ mustard_time($listing_duration->getDuration(), 1) }}</option>
                                                 @endforeach
                                             </select>
                                         </label>
@@ -177,7 +181,7 @@
                                         </div>
                                     </label>
                                     <small class="error">Please enter a monetary value.</small>
-                                    <?php /*<input type="checkbox" name="offers" value="1" id="label-offers" /><label for="label-offers">Allow offers from buyers</label>*/ ?>
+                                    <input type="checkbox" name="offers" value="1" id="label-offers" /><label for="label-offers">Allow offers from buyers</label>
                                 </div>
                                 @if (mustard_loaded('commerce'))
                                     <div class="medium-4 columns">
@@ -185,7 +189,6 @@
                                             <input type="number" name="quantity" value="{{ $item->quantity }}" placeholder="How many can you sell?" required pattern="integer" />
                                         </label>
                                         <small class="error">Please enter a monetary value.</small>
-                                        <?php /*<input type="checkbox" name="offers" value="1" id="label-offers" /><label for="label-offers">Allow offers from buyers</label>*/ ?>
                                     </div>
                                 @endif
                                 <div class="medium-4 {{ mustard_loaded('auctions') ? 'medium-offset-4' : '' }} columns">
@@ -204,8 +207,8 @@
                                 <div class="medium-4 columns">
                                     <label>How long should the item appear for?
                                         <select name="duration">
-                                            @foreach ($item_durations as $item_duration)
-                                                <option value="{{ $item_duration->duration }}">{{ $item_duration->name }}</option>
+                                            @foreach ($listing_durations as $listing_duration)
+                                                <option value="{{ $listing_duration->duration }}">{{ mustard_time($listing_duration->getDuration(), 1) }}</option>
                                             @endforeach
                                         </select>
                                     </label>

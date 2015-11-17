@@ -68,15 +68,14 @@
                 <div class="medium-6 columns gallery">
                     <div class="gallery-display">
                         @foreach ($photos as $photo)
-                            <div><img src="{{ $photo->largeUrl }}" /></div>
+                            <div><img src="{{ $photo->urlLarge }}" /></div>
                         @endforeach
-                        @if (!$photos->count())
-                            <div><img src="{{ public_path() . '/images/no-photo.gif' }}" /></div>
-                        @endif
                     </div>
                     <div class="gallery-nav">
                         @foreach ($photos as $photo)
-                            <div><img src="{{ $photo->smallUrl }}" /></div>
+                            @if ($photo->exists)
+                                <div><img src="{{ $photo->urlSmall }}" /></div>
+                            @endif
                         @endforeach
                     </div>
                 </div>

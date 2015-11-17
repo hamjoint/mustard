@@ -32,7 +32,7 @@
                                 @if ($item->photos->count())
                                 <div class="dropzone-existing">
                                     @foreach ($item->photos as $photo)
-                                        <div data-filename="{{ $photo->photoId }}" data-filesize="{{ filesize($photo->getPath()) }}" data-filepath="{{ $photo->smallUrl }}"></div>
+                                        <div data-filename="{{ $photo->photoId }}" data-filesize="{{ filesize($photo->getPath()) }}" data-filepath="{{ $photo->urlSmall }}"></div>
                                     @endforeach
                                 </div>
                                 @endif
