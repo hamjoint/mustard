@@ -23,9 +23,11 @@ namespace Hamjoint\Mustard\Http\Controllers;
 
 use Auth;
 use Hamjoint\Mustard\Category;
+use Hamjoint\Mustard\Http\Requests\ItemNew;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
 use Hamjoint\Mustard\ListingDuration;
+use Hamjoint\Mustard\Media\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -45,9 +47,13 @@ class ItemController extends Controller
             return mustard_redirect('/');
         }
 
-        $photos = mustard_loaded('media')
-            ? $item->photos()->orderBy('primary', 'desc')->get()
-            : new Collection;
+        if (mustard_loaded('media')) {
+            $photos = $item->photos()->orderBy('primary', 'desc')->get();
+
+            if ($photos->isEmpty()) {
+                $photos->push(new Photo);
+            };
+        }
 
         $bids = mustard_loaded('auctions')
             ? $item->getBidHistory()
@@ -86,7 +92,7 @@ class ItemController extends Controller
         return view('mustard::item.new', [
             'categories' => $categories,
             'item' => new Item,
-            'item_durations' => ListingDuration::all(),
+            'listing_durations' => ListingDuration::all(),
             'item_conditions' => ItemCondition::all(),
             'photos' => $session_photos,
         ]);
@@ -159,41 +165,19 @@ class ItemController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postNew(Request $request)
+    public function postNew(ItemNew $request)
     {
-        $this->validate(
-            $request,
-            [
-                'name' => 'required|min:3',
-                'condition' => 'required|exists:item_conditions',
-                'description' => 'required|min:10',
-                'categories' => 'required',
-                'type' => 'required|in:fixed,auction',
-                'quantity' => 'required_if:type,fixed|integer',
-                'start_price' => 'required_if:type,auction|monetary',
-                'duration' => 'required|exists:item_durations,duration',
-                'fixed_price' => 'required_if:type,fixed|monetary',
-                'reserve_price' => 'monetary',
-                'start_date' => 'required|date|after:now',
-                'start_time' => 'required|time|after:now',
-                'collection' => 'required_without:delivery_option',
-                'collection_location' => 'required_with:collection',
-                'returns_period' => 'required_with:returns|integer',
-            ]
-        );
-
         $file = $request->file('doc');
 
         $item = new Item;
 
         $item->name = $request->input('name');
-        $item->condition = $request->input('condition');
         $item->description = $request->input('description');
         $item->auction = $request->input('type') == 'auction';
         $item->quantity = $request->input('type') != 'fixed'
             ? $request->input('quantity')
             : 1;
-        $item->commission = \Config::get('payment.commission');
+        $item->commission = 0;
         $item->startPrice = $request->input('start_price');
         $item->biddingPrice = $request->input('type') == 'auction'
             ? $request->input('start_price')
@@ -202,7 +186,6 @@ class ItemController extends Controller
             ? $request->input('bin_price')
             : $request->input('fixed_price');
         $item->reservePrice = $request->input('reserve_price');
-        $item->period = $request->input('period');
         $item->startDate = strtotime($request->input('start_date') . ' ' . $request->input('start_time'));
         $item->startDate = $item->startDate < time() ? time() : $item->startDate;
         $item->endDate = $item->getEndDate();
@@ -210,7 +193,10 @@ class ItemController extends Controller
         $item->paymentOther = (bool) $request->input('payment_other');
         $item->returnsPeriod = $request->input('returns_period');
 
+        $item->duration = ListingDuration::where('duration', $request->input('duration'))->value('duration');
+
         $item->created = time();
+        $item->condition()->associate($request->input('condition'));
         $item->seller()->associate(Auth::user());
 
         $item->save();
@@ -221,51 +207,49 @@ class ItemController extends Controller
             }
         }
 
-        if (!$item->categories->count()) {
-            return redirect()->back()->withErrors(['categories' => 'You must select at least one category.']);
-        }
+        if (mustard_loaded('media')) {
+            $photos = [];
 
-        $photos = [];
-
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $file) {
-                $photos[] = [
-                    'real_path' => $file->getRealPath(),
-                    'filename' => $file->getClientOriginalName()
-                ];
-            }
-        }
-
-        if (Session::has('photos')) {
-            foreach (Session::pull('photos') as $file) {
-                $photos[] = $file;
-            }
-        }
-
-        $primary_set = false;
-
-        foreach ($photos as $file) {
-            $pp = new \PhotoProcessor($file['real_path']);
-
-            try {
-                $pp->validate();
-            } catch (\PhotoFormatUnknownException $e) {
-                self::formFlash(array_keys(array_except($request->all(), ['photos'])));
-
-                return redirect()->back()->withErrors([$file['filename'] . ' is not an image format we could recognise.']);
+            if ($request->hasFile('photos')) {
+                foreach ($request->file('photos') as $file) {
+                    $photos[] = [
+                        'real_path' => $file->getRealPath(),
+                        'filename' => $file->getClientOriginalName()
+                    ];
+                }
             }
 
-            $photo = new \Hamjoint\Mustard\Media\Photo;
+            if (Session::has('photos')) {
+                foreach (Session::pull('photos') as $file) {
+                    $photos[] = $file;
+                }
+            }
 
-            if (!$primary_set) $photo->primary = $primary_set = true;
+            $primary_set = false;
 
-            $photo->processed = false;
+            foreach ($photos as $file) {
+                $pp = new \PhotoProcessor($file['real_path']);
 
-            $photo->item()->associate($item);
+                try {
+                    $pp->validate();
+                } catch (\PhotoFormatUnknownException $e) {
+                    self::formFlash(array_keys(array_except($request->all(), ['photos'])));
 
-            $photo->save();
+                    return redirect()->back()->withErrors([$file['filename'] . ' is not an image format we could recognise.']);
+                }
 
-            $pp->process($photo);
+                $photo = new \Hamjoint\Mustard\Media\Photo;
+
+                if (!$primary_set) $photo->primary = $primary_set = true;
+
+                $photo->processed = false;
+
+                $photo->item()->associate($item);
+
+                $photo->save();
+
+                $pp->process($photo);
+            }
         }
 
         foreach ((array) $request->input('delivery_options') as $delivery_option) {
@@ -302,7 +286,7 @@ class ItemController extends Controller
 
         $item->seller->sendEmail(
             'You have listed an item',
-            'emails.item.listed',
+            'mustard::emails.item.listed',
             [
                 'item_id' => $item->itemId,
                 'item_name' => $item->name,
