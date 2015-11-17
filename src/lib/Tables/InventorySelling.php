@@ -37,7 +37,7 @@ class InventorySelling extends Table
         'Name' => 'name',
         'Duration' => 'duration',
         'Details' => null,
-        'Time left' => 'time_ended',
+        'Time left' => 'end_date',
         'Options' => null,
     ];
 
@@ -58,7 +58,7 @@ class InventorySelling extends Table
      *
      * @var string
      */
-    public $defaultSortKey = 'time_ended';
+    public $defaultSortKey = 'end_date';
 
     /**
      * Default sort order.
@@ -73,14 +73,4 @@ class InventorySelling extends Table
      * @var string
      */
     public $presenter = FoundationFivePresenter::class;
-
-    /**
-     * Sort by time since item ended.
-     *
-     * @return void
-     */
-    public function sortTimeEnded($sortOrder)
-    {
-        $this->db->orderBy(DB::raw('unix_timestamp() - cast(`end_date` as signed)'), $sortOrder);
-    }
 }
