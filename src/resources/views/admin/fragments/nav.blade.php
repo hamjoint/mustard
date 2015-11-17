@@ -30,6 +30,12 @@
         <i class="fa fa-calendar"></i>
         <label>Listing Durations</label>
     </a>
+    @if (mustard_loaded('messaging'))
+        <a class="item {{ Request::is('admin/messages') ? 'active' : '' }}" href="/admin/messages">
+            <i class="fa fa-envelope"></i>
+            <label>Messages</label>
+        </a>
+    @endif
     <a class="item {{ Request::is('admin/mailout') ? 'active' : '' }}" href="/admin/mailout">
         <i class="fa fa-paper-plane"></i>
         <label>Mailout</label>

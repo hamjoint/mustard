@@ -7,10 +7,10 @@
 @section('content')
     <div class="admin-listing-conditions">
         <div class="row">
-            <div class="medium-2 columns">
+            <div class="medium-3 large-2 columns">
                 @include('mustard::admin.fragments.nav')
             </div>
-            <div class="medium-10 columns">
+            <div class="medium-9 large-10 columns">
                 @include('tablelegs::filter')
                 @if (!$table->isEmpty())
                     <table class="expand">

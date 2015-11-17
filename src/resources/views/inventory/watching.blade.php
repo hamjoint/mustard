@@ -6,10 +6,10 @@
 
 @section('content')
 <div class="row">
-    <div class="medium-2 columns">
+    <div class="medium-3 large-2 columns">
         @include('mustard::inventory.nav')
     </div>
-    <div class="medium-10 columns">
+    <div class="medium-9 large-10 columns">
         @include('tablelegs::filter')
         @if (!$table->isEmpty())
             @foreach ($items->chunk(4) as $chunked_items)

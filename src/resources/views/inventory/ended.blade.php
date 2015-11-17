@@ -6,10 +6,10 @@
 
 @section('content')
 <div class="row">
-    <div class="medium-2 columns">
+    <div class="medium-3 large-2 columns">
         @include('mustard::inventory.nav')
     </div>
-    <div class="medium-10 columns">
+    <div class="medium-9 large-10 columns">
         @if (!$table->isEmpty())
             <table class="expand">
                 @include('tablelegs::header')

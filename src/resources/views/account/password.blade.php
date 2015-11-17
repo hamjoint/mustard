@@ -6,10 +6,10 @@
 
 @section('content')
 <div class="row">
-    <div class="medium-2 columns">
+    <div class="medium-3 large-2 columns">
         @include('mustard::account.nav')
     </div>
-    <div class="medium-10 columns">
+    <div class="medium-9 large-10 columns">
         <form method="post" action="/account/password" data-abide="true" class="content active" id="password">
             {!! csrf_field() !!}
             <fieldset>
