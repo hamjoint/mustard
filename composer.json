@@ -1,6 +1,6 @@
 {
     "name": "hamjoint/mustard",
-    "description": "The open source marketplace platform",
+    "description": "The open source marketplace platform.",
     "keywords": ["mustard", "marketplace", "auctions", "classifieds", "ecommerce"],
     "license": "GPL-3.0",
     "authors": [
