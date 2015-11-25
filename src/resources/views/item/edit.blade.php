@@ -12,9 +12,12 @@
         <div class="row">
             <div class="medium-12 columns">
                 <form method="post" action="/item/add-photos" data-abide="true" class="photos" enctype="multipart/form-data">
+                    {!! csrf_field() !!}
                 </form>
                 <form method="post" action="/item/edit" data-abide="true" id="edit-item">
-                    @if ($item->isFixed() || !$item->hasBids())
+                    {!! csrf_field() !!}
+                    <input type="hidden" name="item_id" value="{{ $item->getKey() }}" />
+                    @if (!mustard_loaded('auctions') || !$item->auction || !$item->hasBids())
                     <fieldset>
                         <legend>Photos</legend>
                         <div class="row">
@@ -52,7 +55,7 @@
                         </div>
                     </fieldset>
                     @endif
-                    @if ($item->isFixed())
+                    @if (!$item->auction)
                     <fieldset>
                         <legend>Stock &amp; pricing</legend>
                         <div class="row">
@@ -138,4 +141,8 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('script')
+    @include('mustard::item.new-edit-script')
 @stop

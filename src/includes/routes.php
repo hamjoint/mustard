@@ -45,10 +45,11 @@ Route::group([
 
         Route::get('sell', 'ItemController@getNew');
         Route::get('item/new', 'ItemController@getNew');
+        Route::get('item/edit/{id}', 'ItemController@getEdit');
+        Route::get('item/relist/{id}', 'ItemController@getRelist');
+        Route::get('item/end/{id}', 'ItemController@getEnd');
         Route::post('item/new', 'ItemController@postNew');
-        Route::get('item/edit', 'ItemController@getEdit');
-        Route::get('item/relist', 'ItemController@getRelist');
-        Route::get('item/end', 'ItemController@getEnd');
+        Route::post('item/edit', 'ItemController@postEdit');
         Route::post('item/end', 'ItemController@postEnd');
         Route::post('item/cancel', 'ItemController@postCancel');
         Route::post('item/watch', 'ItemController@postWatch');
