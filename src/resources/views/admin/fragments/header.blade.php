@@ -26,10 +26,4 @@
             </ul>
         </section>
     </nav>
-    @if ($errors->any())
-        @include('mustard::fragments.errors')
-    @endif
-    @if (isset($message) || $message = session('message'))
-        @include('mustard::fragments.message')
-    @endif
 </header>
