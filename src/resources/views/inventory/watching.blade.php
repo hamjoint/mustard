@@ -43,7 +43,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <div><strong><a href="{{ $item->url }}">{{ $item->name}}</a></strong></div>
+                            <div><a href="{{ $item->url }}">{{ $item->name}}</a></div>
                         </div>
                     @endforeach
                 </div>
