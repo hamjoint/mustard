@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-    <div class="sell">
+    <div class="edit-item">
         <div class="row">
             <h1 class="medium-12 columns">Editing {{ $item->name }}</h1>
         </div>
@@ -17,7 +17,7 @@
                 <form method="post" action="/item/edit" data-abide="true" id="edit-item">
                     {!! csrf_field() !!}
                     <input type="hidden" name="item_id" value="{{ $item->getKey() }}" />
-                    @if (!mustard_loaded('auctions') || !$item->auction || !$item->hasBids())
+                    @if (!$item->auction || mustard_loaded('auctions') && !$item->has('bids'))
                     <fieldset>
                         <legend>Photos</legend>
                         <div class="row">
