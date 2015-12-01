@@ -84,11 +84,60 @@
                 margin-bottom: 16px !important;
             }
 
-            td > input[type="file"],
-            td > input[type="checkbox"],
-            td > input[type="radio"],
-            td > select {
+            td input[type="file"],
+            td input[type="checkbox"],
+            td input[type="radio"],
+            td select,
+            td button {
                 margin: 0;
+            }
+
+            .mosaic .image {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .mosaic .image img {
+                display: block;
+            }
+
+            .mosaic .image form {
+                position: absolute;
+                top: 4px;
+                right: 4px;
+            }
+
+            .mosaic .image div {
+                position: absolute;
+                color: #fff;
+                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            }
+
+            .mosaic .image a {
+                display: block;
+            }
+
+            .mosaic .image .price {
+                text-align: right;
+                right: 4px;
+                bottom: 4px;
+            }
+
+            .mosaic .image .time-left {
+                left: 4px;
+                top: 4px;
+            }
+
+            .mosaic.ended .image:after {
+                content: "Ended";
+                transform: rotate(-45deg);
+                font-size: 32px;
+                position: absolute;
+                top: 24px;
+                left: -48px;
+                background-color: #555;
+                color: #FFF;
+                padding: 0px 50px;
             }
         </style>
     </head>
