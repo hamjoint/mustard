@@ -273,7 +273,7 @@ class TestSeeder extends Seeder
                     do { $user = mt_rand_arr($this->users); } while ($user->userId == $item->seller->userId);
 
                     $bid->bidder()->associate($user);
-                    $minimum_bid = Item::getMinimumBidAmount($bid_amount);
+                    $minimum_bid = \Hamjoint\Mustard\Auctions\BidIncrement::getMinimumNextBid($bid_amount);
                     $bid->amount = $bid_amount = ($i == 0)
                         ? $item->startPrice
                         : (mt_rand($minimum_bid * 100, ($minimum_bid + $bid_amount) * 100) / 100);
@@ -285,7 +285,7 @@ class TestSeeder extends Seeder
                 $last_bids = $item->bids()->orderBy('placed', 'desc')->take(2)->get();
 
                 if ($last_bids->count()) {
-                    $item->biddingPrice = Item::getMinimumBidAmount($last_bids->last()->amount);
+                    $item->biddingPrice = \Hamjoint\Mustard\Auctions\BidIncrement::getMinimumNextBid($last_bids->last()->amount);
                 }
 
                 if (!$item->isActive()) {
