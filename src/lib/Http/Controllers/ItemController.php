@@ -174,26 +174,26 @@ class ItemController extends Controller
         $item->name = $request->input('name');
         $item->description = $request->input('description');
         $item->auction = $request->input('type') == 'auction';
-        $item->quantity = $request->input('type') != 'fixed'
-            ? $request->input('quantity')
-            : 1;
+        $item->quantity = $request->input('type') == 'auction'
+            ? 1
+            : $request->input('quantity');
         $item->commission = 0;
         $item->startPrice = $request->input('start_price');
         $item->biddingPrice = $request->input('type') == 'auction'
             ? $request->input('start_price')
-            : 0.00;
-        $item->fixedPrice = $request->input('type') == 'auction'
-            ? $request->input('bin_price')
-            : $request->input('fixed_price');
+            : 0;
+        $item->fixedPrice = $request->input('fixed_price');
         $item->reservePrice = $request->input('reserve_price');
         $item->startDate = strtotime($request->input('start_date') . ' ' . $request->input('start_time'));
         $item->startDate = $item->startDate < time() ? time() : $item->startDate;
+        $item->duration = ListingDuration::where(
+            'duration',
+            $request->input('duration')
+        )->value('duration');
         $item->endDate = $item->getEndDate();
         $item->collectionLocation = $request->input('collection_location');
         $item->paymentOther = (bool) $request->input('payment_other');
         $item->returnsPeriod = $request->input('returns_period');
-
-        $item->duration = ListingDuration::where('duration', $request->input('duration'))->value('duration');
 
         $item->created = time();
         $item->condition()->associate($request->input('condition'));
@@ -219,8 +219,8 @@ class ItemController extends Controller
                 }
             }
 
-            if (Session::has('photos')) {
-                foreach (Session::pull('photos') as $file) {
+            if ($request->session()->has('photos')) {
+                foreach ($request->session()->pull('photos') as $file) {
                     $photos[] = $file;
                 }
             }
@@ -293,7 +293,29 @@ class ItemController extends Controller
             ]
         );
 
-        return redirect('/item/' . $item->item_id);
+        return redirect($item->url);
+    }
+
+    /**
+     * Edit an item.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postEdit(Request $request)
+    {
+        $item = Item::findOrFail($request->input('item_id'));
+
+        if ($item->userId != Auth::user()->userId) {
+            return redirect()->back()->withErrors(['You can only edit your own items.']);
+        }
+
+        if (!$item->isActive()) {
+            return redirect()->back()->withErrors(['You can only edit an active item.']);
+        }
+
+        return redirect('/inventory/selling')
+            ->with('message', $item->name . ' has been edited.');
     }
 
     /**
