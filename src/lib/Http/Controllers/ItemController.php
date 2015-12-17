@@ -181,7 +181,7 @@ class ItemController extends Controller
         $item->startPrice = $request->input('start_price');
         $item->biddingPrice = $request->input('type') == 'auction'
             ? $request->input('start_price')
-            : 0;
+            : null;
         $item->fixedPrice = $request->input('fixed_price');
         $item->reservePrice = $request->input('reserve_price');
         $item->startDate = strtotime($request->input('start_date') . ' ' . $request->input('start_time'));
@@ -315,7 +315,7 @@ class ItemController extends Controller
         }
 
         return redirect('/inventory/selling')
-            ->with('message', $item->name . ' has been edited.');
+            ->withStatus($item->name . ' has been edited.');
     }
 
     /**
@@ -339,7 +339,7 @@ class ItemController extends Controller
         $item->end();
 
         return redirect('/inventory/unsold')
-            ->with('message', $item->name . ' has been ended early.');
+            ->withStatus($item->name . ' has been ended early.');
     }
 
     /**
@@ -363,7 +363,7 @@ class ItemController extends Controller
         $item->cancel();
 
         return redirect('/inventory/unsold')
-            ->with('message', $item->name . ' has been cancelled.');
+            ->withStatus($item->name . ' has been cancelled.');
     }
 
     /**
@@ -388,7 +388,7 @@ class ItemController extends Controller
             'added' => time(),
         ]);
 
-        return redirect()->back()->with('message', $item->name . ' has been added to your watched items.');
+        return redirect()->back()->withStatus($item->name . ' has been added to your watched items.');
     }
 
     /**
@@ -407,6 +407,6 @@ class ItemController extends Controller
 
         Auth::user()->watching()->detach($item);
 
-        return redirect()->back()->with('message', $item->name . ' has been removed from your watched items.');
+        return redirect()->back()->withStatus($item->name . ' has been removed from your watched items.');
     }
 }

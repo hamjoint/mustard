@@ -348,6 +348,6 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->withMessage("Mailout sent to $count recipients.");
+        return redirect()->back()->withStatus("Mailout sent to $count recipients.");
     }
 }
