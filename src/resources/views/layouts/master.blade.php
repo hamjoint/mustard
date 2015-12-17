@@ -109,8 +109,8 @@
 
             .mosaic .image div {
                 position: absolute;
-                color: #fff;
-                text-shadow: 0 0 5px rgba(0,0,0,0.5);
+                color: #cbcbcb;
+                text-shadow: 0px 0px 3px #fff;
             }
 
             .mosaic .image a {
@@ -136,7 +136,7 @@
                 top: 24px;
                 left: -48px;
                 background-color: #555;
-                color: #FFF;
+                color: #fff;
                 padding: 0px 50px;
             }
         </style>
@@ -150,8 +150,8 @@
         @if ($errors->any())
             @include('mustard::fragments.errors')
         @endif
-        @if (isset($sessage) || $sessage = session('message'))
-            @include('mustard::fragments.sessage')
+        @if (isset($status) || $status = session('status'))
+            @include('mustard::fragments.status')
         @endif
         <main>
             @yield('content')
