@@ -50,16 +50,17 @@ class Category extends Model
         $url = '';
 
         foreach (array_reverse($this->getAncestors()->all()) as $parent) {
-            $url = '/' . $parent->slug . $url;
+            $url = '/'.$parent->slug.$url;
         }
 
-        return "/buy$url/" . $this->slug;
+        return "/buy$url/".$this->slug;
     }
 
     /**
      * Scope of categories with no parents.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeRoots($query)
@@ -71,6 +72,7 @@ class Category extends Model
      * Scope of categories with no children.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeLeaves($query)
@@ -85,7 +87,7 @@ class Category extends Model
      */
     public function getAncestors()
     {
-        $ancestors = new Collection;
+        $ancestors = new Collection();
 
         $ancestor = $this;
 
@@ -125,7 +127,7 @@ class Category extends Model
 
     public function getItemCount()
     {
-        return Cache::remember('category_item_count_' . $this->getKey(), 1, function () {
+        return Cache::remember('category_item_count_'.$this->getKey(), 1, function () {
             $count = $this->items()->active()->count();
 
             $this->getDescendants()->each(function ($descendant) use (&$count) {
@@ -170,6 +172,7 @@ class Category extends Model
      * Find a record by the slug.
      *
      * @param string $slug
+     *
      * @return \Hamjoint\Mustard\Category|null
      */
     public static function findBySlug($slug)

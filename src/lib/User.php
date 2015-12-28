@@ -24,13 +24,13 @@ namespace Hamjoint\Mustard;
 use DateTime;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Auth\Passwords\CanResetPassword;
-use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Collection;
 
-class User extends NonSequentialIdModel implements  AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable, Authorizable, CanResetPassword;
 
@@ -60,15 +60,14 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      *
      * @param string $subject
      * @param string $view
-     * @param array $vars
+     * @param array  $vars
      */
     public function sendEmail($subject, $view, $vars = [])
     {
         $vars['email'] = $email = $this->email;
         $vars['username'] = $username = $this->username;
 
-        \Mail::queue(['text' => $view], $vars, function($message) use ($email, $username, $subject)
-        {
+        \Mail::queue(['text' => $view], $vars, function ($message) use ($email, $username, $subject) {
             $message->subject($subject)
                 ->to($email, $username)
                 ->replyTo(
@@ -81,7 +80,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return the user's feedback score.
      *
-     * @return integer
+     * @return int
      */
     public function getFeedbackScore()
     {
@@ -95,7 +94,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      */
     public function getAcquaintances()
     {
-        $acquaintances = new Collection;
+        $acquaintances = new Collection();
 
         // Past message senders
         foreach ($this->messages()->received()->with('sender')->get() as $message) {
@@ -147,30 +146,31 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     }
 
     /**
-     * Override the parent's url attribute
+     * Override the parent's url attribute.
      *
      * @return string
      */
     public function getUrlAttribute()
     {
-        return '/' . strtolower(class_basename(static::class)) . '/' . $this->getKey();
+        return '/'.strtolower(class_basename(static::class)).'/'.$this->getKey();
     }
 
     /**
-     * Return the user's feedback url
+     * Return the user's feedback url.
      *
      * @return string
      */
     public function getFeedbackUrlAttribute()
     {
-        return '/' . strtolower(class_basename(static::class)) . '/feedback/' . $this->getKey();
+        return '/'.strtolower(class_basename(static::class)).'/feedback/'.$this->getKey();
     }
 
     /**
      * Return true if user is watching the item.
      *
      * @param \Hamjoint\Mustard\Item $item
-     * @return boolean
+     *
+     * @return bool
      */
     public function isWatching(Item $item)
     {
@@ -180,7 +180,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return number of unread messages.
      *
-     * @return integer
+     * @return int
      */
     public function getUnreadMessages()
     {
@@ -191,6 +191,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      * Scope of buyers.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeBuyers($query)
@@ -202,6 +203,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      * Scope of sellers.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSellers($query)
@@ -308,6 +310,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     {
         return $this->belongsToMany('\Hamjoint\Mustard\Item', 'watched_items');
     }
+
     /**
      * Relationship to won items.
      *
@@ -322,6 +325,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      * Find a record by the email address.
      *
      * @param string $email
+     *
      * @return \Hamjoint\Mustard\User|null
      */
     public static function findByEmail($email)
@@ -333,6 +337,7 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      * Find a record by the email address.
      *
      * @param string $username
+     *
      * @return \Hamjoint\Mustard\User|null
      */
     public static function findByUsername($username)
@@ -346,11 +351,12 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
      * @param string $email
      * @param string $password
      * @param string $username
+     *
      * @return \Hamjoint\Mustard\User
      */
     public static function register($email, $password, $username)
     {
-        $user = new self;
+        $user = new self();
 
         $user->email = $email;
 
@@ -368,9 +374,10 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return the total number of users.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalRegistered($since = 0, $until = null)
     {
@@ -384,9 +391,10 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return the total number of users that have placed bids.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalBidders($since = 0, $until = null)
     {
@@ -401,9 +409,10 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return the total number of users with associated purchases.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalBuyers($since = 0, $until = null)
     {
@@ -418,9 +427,10 @@ class User extends NonSequentialIdModel implements  AuthenticatableContract, Aut
     /**
      * Return the total number of users that have posted items.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalSellers($since = 0, $until = null)
     {

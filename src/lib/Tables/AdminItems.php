@@ -33,11 +33,11 @@ class AdminItems extends Table
      * @var array
      */
     public $columnHeaders = [
-        'Item ID' => 'item_id',
-        'Name' => 'name',
-        'Seller' => 'seller',
+        'Item ID'     => 'item_id',
+        'Name'        => 'name',
+        'Seller'      => 'seller',
         'Starting in' => 'starting_in',
-        'Time left' => 'time_left',
+        'Time left'   => 'time_left',
     ];
 
     /**

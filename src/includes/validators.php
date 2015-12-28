@@ -19,12 +19,10 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-Validator::extend('monetary', function($attribute, $value, $parameters)
-{
+Validator::extend('monetary', function ($attribute, $value, $parameters) {
     return (bool) preg_match('/^\d+(\.\d{2})?$/', $value);
 });
 
-Validator::extend('intrange', function($attribute, $value, $parameters)
-{
+Validator::extend('intrange', function ($attribute, $value, $parameters) {
     return (bool) preg_match('/^\d+(-\d+)?$/', $value);
 });

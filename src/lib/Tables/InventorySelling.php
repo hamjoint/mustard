@@ -21,7 +21,6 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard\Tables;
 
-use DB;
 use Foundation\Pagination\FoundationFivePresenter;
 use Tablelegs\Table;
 
@@ -33,12 +32,12 @@ class InventorySelling extends Table
      * @var array
      */
     public $columnHeaders = [
-        'Item ID' => 'item_id',
-        'Name' => 'name',
-        'Duration' => 'duration',
-        'Details' => null,
+        'Item ID'   => 'item_id',
+        'Name'      => 'name',
+        'Duration'  => 'duration',
+        'Details'   => null,
         'Time left' => 'end_date',
-        'Options' => null,
+        'Options'   => null,
     ];
 
     /**
