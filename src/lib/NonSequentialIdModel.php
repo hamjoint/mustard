@@ -41,8 +41,7 @@ abstract class NonSequentialIdModel extends Model
     {
         parent::boot();
 
-        self::creating(function($model)
-        {
+        self::creating(function ($model) {
             do {
                 $id = mt_rand(pow(10, 9), pow(2, 32) - 1);
             } while (self::find($id));

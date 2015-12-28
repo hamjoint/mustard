@@ -43,11 +43,11 @@ class UserController extends Controller
             ->paginate();
 
         return view('mustard::user.profile', [
-            'user' => $user,
-            'items' => $items,
+            'user'      => $user,
+            'items'     => $items,
             'feedbacks' => mustard_loaded('feedback')
                 ? $user->feedbackReceived()->orderBy('placed')->take(3)->get()
-                : new Collection,
+                : new Collection(),
         ]);
     }
 }

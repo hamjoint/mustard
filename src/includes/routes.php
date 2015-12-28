@@ -20,14 +20,12 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 Route::group([
-    'prefix' => env('MUSTARD_BASE', ''),
+    'prefix'    => env('MUSTARD_BASE', ''),
     'namespace' => 'Hamjoint\Mustard\Http\Controllers',
-], function()
-{
+], function () {
     Route::group([
         'middleware' => 'auth',
-    ], function()
-    {
+    ], function () {
         Route::get('account', 'AccountController@getIndex');
         Route::get('account/password', 'AccountController@getPassword');
         Route::post('account/password', 'AccountController@postPassword');

@@ -24,7 +24,6 @@ namespace Hamjoint\Mustard\Http\Controllers;
 use Auth;
 use Hamjoint\Mustard\User;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class AccountController extends Controller
 {
@@ -46,7 +45,7 @@ class AccountController extends Controller
     public function getPassword()
     {
         return view('mustard::account.password', [
-            'page' => "password",
+            'page' => 'password',
         ]);
     }
 
@@ -67,7 +66,7 @@ class AccountController extends Controller
 
         if (!\Hash::check($request->get('old_password'), Auth::user()->password_hash)) {
             return redirect()->back()
-                ->withErrors(['old_password' => "Your old password is not correct."]);
+                ->withErrors(['old_password' => 'Your old password is not correct.']);
         }
 
         if ($request->get('old_password') == $request->get('new_password')) {
@@ -95,7 +94,7 @@ class AccountController extends Controller
     public function getEmail()
     {
         return view('mustard::account.email', [
-            'page' => "email",
+            'page' => 'email',
         ]);
     }
 
@@ -119,7 +118,7 @@ class AccountController extends Controller
 
         if (User::findByEmail($request->get('email'))) {
             return redirect()->back()
-                ->withErrors(['email' => "That email address is in use by another account."]);
+                ->withErrors(['email' => 'That email address is in use by another account.']);
         }
 
         Auth::user()->sendEmail(
@@ -134,7 +133,7 @@ class AccountController extends Controller
             'Verify your new email address',
             'emails.account.verify',
             [
-                'key' => Auth::user()->addVerification(),
+                'key'         => Auth::user()->addVerification(),
                 'new_account' => false,
             ]
         );
@@ -155,7 +154,7 @@ class AccountController extends Controller
     public function getNotifications()
     {
         return view('mustard::account.notifications', [
-            'page' => "notifications",
+            'page' => 'notifications',
         ]);
     }
 
@@ -163,6 +162,7 @@ class AccountController extends Controller
      * Change account notification settings.
      *
      * @return \Illuminate\Http\RedirectResponse
+     *
      * @todo Add logic
      */
     public function postNotifications()

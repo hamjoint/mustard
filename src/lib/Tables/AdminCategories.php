@@ -34,10 +34,10 @@ class AdminCategories extends Table
      */
     public $columnHeaders = [
         'Category ID' => 'category_id',
-        'Parent' => 'parent_category_id',
-        'Name' => 'name',
-        'Slug' => 'slug',
-        'Items' => 'items',
+        'Parent'      => 'parent_category_id',
+        'Name'        => 'name',
+        'Slug'        => 'slug',
+        'Items'       => 'items',
     ];
 
     /**

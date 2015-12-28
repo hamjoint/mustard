@@ -24,10 +24,10 @@ namespace Hamjoint\Mustard\Seeders;
 use DB;
 use Faker\Factory as FakerFactory;
 use Hamjoint\Mustard\Category;
-use Hamjoint\Mustard\Model;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
 use Hamjoint\Mustard\ListingDuration;
+use Hamjoint\Mustard\Model;
 use Hamjoint\Mustard\User;
 use Hash;
 use Illuminate\Database\Seeder;
@@ -45,7 +45,7 @@ class TestSeeder extends Seeder
     const TOTAL_ITEMS = 1000;
 
     /**
-     * Total users to generate
+     * Total users to generate.
      */
     const TOTAL_USERS = 200;
 
@@ -101,6 +101,7 @@ class TestSeeder extends Seeder
         $this->faker = FakerFactory::create('en_GB');
 
         // Returns a random element from an array
+
         function mt_rand_arr($array, $exclude = [])
         {
             if ($exclude) {
@@ -123,7 +124,7 @@ class TestSeeder extends Seeder
         $this->command->info('Adding categories');
 
         for ($i = 1; $i <= self::TOTAL_CATEGORIES; $i++) {
-            $category = new Category;
+            $category = new Category();
 
             $category->name = implode(' ', $this->faker->words(2));
             $category->slug = str_slug($category->name);
@@ -147,10 +148,9 @@ class TestSeeder extends Seeder
         $this->command->info('Adding users');
 
         for ($i = 1; $i <= self::TOTAL_USERS; $i++) {
-            $user = new User;
+            $user = new User();
 
-            $user->username = $this->faker->userName;
-            while (User::findByEmail($user->email = $this->faker->email));
+            $user->username = $this->faker->userName; while (User::findByEmail($user->email = $this->faker->email));
             $user->password = Hash::make('password');
             //$user->verified = true;
             $user->joined = mt_rand($this->now - mt_rand(0, 86400 * 200), $this->now);
@@ -170,7 +170,7 @@ class TestSeeder extends Seeder
 
             foreach ($this->users as $user) {
                 for ($i = 0; $i <= mt_rand(1, 3); $i++) {
-                    $postal_address = new \Hamjoint\Mustard\Commerce\PostalAddress;
+                    $postal_address = new \Hamjoint\Mustard\Commerce\PostalAddress();
 
                     $postal_address->user()->associate($user);
 
@@ -190,7 +190,7 @@ class TestSeeder extends Seeder
         $this->command->info('Adding items');
 
         for ($i = 1; $i <= self::TOTAL_ITEMS; $i++) {
-            $item = new Item;
+            $item = new Item();
 
             $item->seller()->associate(mt_rand_arr($this->users));
             $item->condition()->associate($this->itemConditions->random());
@@ -228,7 +228,7 @@ class TestSeeder extends Seeder
 
             // Add delivery options
             for ($ii = 0; $ii < mt_rand(0, 3); $ii++) {
-                $delivery_option = new \Hamjoint\Mustard\DeliveryOption;
+                $delivery_option = new \Hamjoint\Mustard\DeliveryOption();
 
                 $delivery_option->name = implode(' ', $this->faker->words(3));
                 $delivery_option->price = mt_rand(50, 1000) / 100;
@@ -252,7 +252,7 @@ class TestSeeder extends Seeder
 
             foreach (array_unique($watchers) as $watcher) {
                 $item->watchers()->save($watcher, [
-                    'added' => mt_rand($item->startDate, $item->endDate)
+                    'added' => mt_rand($item->startDate, $item->endDate),
                 ]);
             }
         }
@@ -266,11 +266,15 @@ class TestSeeder extends Seeder
                 $end_time = $item->endDate < $this->now ? $item->endDate : $this->now;
 
                 for ($i = 0; $i < mt_rand(0, 10); $i++) {
-                    if ($bid_time == $end_time) break;
+                    if ($bid_time == $end_time) {
+                        break;
+                    }
 
-                    $bid = new \Hamjoint\Mustard\Auctions\Bid;
+                    $bid = new \Hamjoint\Mustard\Auctions\Bid();
 
-                    do { $user = mt_rand_arr($this->users); } while ($user->userId == $item->seller->userId);
+                    do {
+                        $user = mt_rand_arr($this->users);
+                    } while ($user->userId == $item->seller->userId);
 
                     $bid->bidder()->associate($user);
                     $minimum_bid = \Hamjoint\Mustard\Auctions\BidIncrement::getMinimumNextBid($bid_amount);
@@ -290,10 +294,12 @@ class TestSeeder extends Seeder
 
                 if (!$item->isActive()) {
                     $bid = $item->bids()
-                        ->where('amount', DB::raw('(select max(`amount`) from `bids` where `item_id` = '. $item->itemId .')'))
+                        ->where('amount', DB::raw('(select max(`amount`) from `bids` where `item_id` = '.$item->itemId.')'))
                         ->first();
 
-                    if ($bid) $item->winningBid()->associate($bid);
+                    if ($bid) {
+                        $item->winningBid()->associate($bid);
+                    }
                 }
 
                 $item->save();
@@ -313,7 +319,7 @@ class TestSeeder extends Seeder
                 }
 
                 if (mt_rand(0, 5)) {
-                    $purchase = new \Hamjoint\Mustard\Commerce\Purchase;
+                    $purchase = new \Hamjoint\Mustard\Commerce\Purchase();
 
                     $purchase->item()->associate($item);
                     $purchase->buyer()->associate(
@@ -374,7 +380,7 @@ class TestSeeder extends Seeder
                         list($rater, $subject) = [$subject, $rater];
                     }
 
-                    $feedback = new \Hamjoint\Mustard\Feedback\UserFeedback;
+                    $feedback = new \Hamjoint\Mustard\Feedback\UserFeedback();
 
                     $feedback->rating = mt_rand(0, 10) - 5;
                     $feedback->message = $this->faker->sentence;
@@ -394,7 +400,7 @@ class TestSeeder extends Seeder
 
             foreach (User::all() as $user) {
                 for ($i = 0; $i < mt_rand(5, 50); $i++) {
-                    $message = new \Hamjoint\Mustard\Messaging\Message;
+                    $message = new \Hamjoint\Mustard\Messaging\Message();
 
                     $message->subject = $this->faker->sentence;
                     $message->body = implode("\n\n", $this->faker->paragraphs(2));

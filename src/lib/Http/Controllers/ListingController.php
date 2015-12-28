@@ -75,8 +75,8 @@ class ListingController extends Controller
                 ->orderBy('sort', 'asc')
                 ->orderBy('name', 'asc')
                 ->get(),
-            'table' => $table,
-            'items' => $table->paginate(),
+            'table'         => $table,
+            'items'         => $table->paginate(),
             'view_category' => $category,
         ]);
     }

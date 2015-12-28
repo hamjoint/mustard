@@ -33,7 +33,7 @@ class AdminItemConditions extends Table
      */
     public $columnHeaders = [
         'Item Condition ID' => 'item_condition_id',
-        'Name' => 'name',
+        'Name'              => 'name',
     ];
 
     /**

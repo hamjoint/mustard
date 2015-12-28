@@ -37,6 +37,7 @@ class ItemController extends Controller
      * Return the item summary view.
      *
      * @param int $itemId
+     *
      * @return \Illuminate\View\View
      */
     public function getIndex($itemId)
@@ -51,22 +52,22 @@ class ItemController extends Controller
             $photos = $item->photos()->orderBy('primary', 'desc')->get();
 
             if ($photos->isEmpty()) {
-                $photos->push(new Photo);
+                $photos->push(new Photo());
             };
         }
 
         $bids = mustard_loaded('auctions')
             ? $item->getBidHistory()
-            : new Collection;
+            : new Collection();
 
         $highest_bid = mustard_loaded('auctions')
-            ? ($bids->first() ?: new \Hamjoint\Mustard\Auctions\Bid)
-            : new Collection;
+            ? ($bids->first() ?: new \Hamjoint\Mustard\Auctions\Bid())
+            : new Collection();
 
         return view('mustard::item.summary', [
-            'item' => $item,
-            'photos' => $photos,
-            'bids' => $bids,
+            'item'        => $item,
+            'photos'      => $photos,
+            'bids'        => $bids,
             'highest_bid' => $highest_bid,
         ]);
     }
@@ -75,6 +76,7 @@ class ItemController extends Controller
      * Return the new item view.
      *
      * @param int $itemId
+     *
      * @return \Illuminate\View\View
      */
     public function getNew()
@@ -90,11 +92,11 @@ class ItemController extends Controller
         }
 
         return view('mustard::item.new', [
-            'categories' => $categories,
-            'item' => new Item,
+            'categories'        => $categories,
+            'item'              => new Item(),
             'listing_durations' => ListingDuration::all(),
-            'item_conditions' => ItemCondition::all(),
-            'photos' => $session_photos,
+            'item_conditions'   => ItemCondition::all(),
+            'photos'            => $session_photos,
         ]);
     }
 
@@ -102,6 +104,7 @@ class ItemController extends Controller
      * Return the edit item view.
      *
      * @param int $itemId
+     *
      * @return \Illuminate\View\View
      */
     public function getEdit($itemId)
@@ -117,6 +120,7 @@ class ItemController extends Controller
      * Return the relist item view.
      *
      * @param int $itemId
+     *
      * @return \Illuminate\View\View
      */
     public function getRelist($itemId)
@@ -128,14 +132,14 @@ class ItemController extends Controller
         foreach ($item->photos as $photo) {
             Session::push('photos', [
                 'real_path' => $photo->getPath(),
-                'filename' => $photo->photoId,
+                'filename'  => $photo->photoId,
             ]);
         }
 
         $categories = Category::leaves()->orderBy('category_id')->get();
 
         return view('mustard::item.new', [
-            'item' => $item,
+            'item'       => $item,
             'categories' => $categories,
         ]);
     }
@@ -144,6 +148,7 @@ class ItemController extends Controller
      * Return the end item view.
      *
      * @param int $itemId
+     *
      * @return \Illuminate\View\View
      */
     public function getEnd($itemId)
@@ -151,7 +156,7 @@ class ItemController extends Controller
         $item = Item::findOrFail($itemId);
 
         if ($item->isEnded()) {
-            return redirect('/item/' . $item->itemId);
+            return redirect('/item/'.$item->itemId);
         }
 
         return view('mustard::item.end', [
@@ -163,13 +168,14 @@ class ItemController extends Controller
      * Create a new item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postNew(ItemNew $request)
     {
         $file = $request->file('doc');
 
-        $item = new Item;
+        $item = new Item();
 
         $item->name = $request->input('name');
         $item->description = $request->input('description');
@@ -184,7 +190,7 @@ class ItemController extends Controller
             : null;
         $item->fixedPrice = $request->input('fixed_price');
         $item->reservePrice = $request->input('reserve_price');
-        $item->startDate = strtotime($request->input('start_date') . ' ' . $request->input('start_time'));
+        $item->startDate = strtotime($request->input('start_date').' '.$request->input('start_time'));
         $item->startDate = $item->startDate < time() ? time() : $item->startDate;
         $item->duration = ListingDuration::where(
             'duration',
@@ -214,7 +220,7 @@ class ItemController extends Controller
                 foreach ($request->file('photos') as $file) {
                     $photos[] = [
                         'real_path' => $file->getRealPath(),
-                        'filename' => $file->getClientOriginalName()
+                        'filename'  => $file->getClientOriginalName(),
                     ];
                 }
             }
@@ -235,12 +241,14 @@ class ItemController extends Controller
                 } catch (\PhotoFormatUnknownException $e) {
                     self::formFlash(array_keys(array_except($request->all(), ['photos'])));
 
-                    return redirect()->back()->withErrors([$file['filename'] . ' is not an image format we could recognise.']);
+                    return redirect()->back()->withErrors([$file['filename'].' is not an image format we could recognise.']);
                 }
 
-                $photo = new \Hamjoint\Mustard\Media\Photo;
+                $photo = new \Hamjoint\Mustard\Media\Photo();
 
-                if (!$primary_set) $photo->primary = $primary_set = true;
+                if (!$primary_set) {
+                    $photo->primary = $primary_set = true;
+                }
 
                 $photo->processed = false;
 
@@ -256,9 +264,9 @@ class ItemController extends Controller
             $validator = \Validator::make(
                 $delivery_option,
                 [
-                    'name' => 'required|min:3',
-                    'price' => 'required|monetary',
-                    'arrival_time' => 'required|intrange'
+                    'name'         => 'required|min:3',
+                    'price'        => 'required|monetary',
+                    'arrival_time' => 'required|intrange',
                 ]
             );
 
@@ -267,7 +275,7 @@ class ItemController extends Controller
                 continue;
             }
 
-            $do = new DeliveryOption;
+            $do = new DeliveryOption();
 
             $do->name = $delivery_option['name'];
 
@@ -288,7 +296,7 @@ class ItemController extends Controller
             'You have listed an item',
             'mustard::emails.item.listed',
             [
-                'item_id' => $item->itemId,
+                'item_id'   => $item->itemId,
                 'item_name' => $item->name,
             ]
         );
@@ -300,6 +308,7 @@ class ItemController extends Controller
      * Edit an item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEdit(Request $request)
@@ -315,13 +324,14 @@ class ItemController extends Controller
         }
 
         return redirect('/inventory/selling')
-            ->withStatus($item->name . ' has been edited.');
+            ->withStatus($item->name.' has been edited.');
     }
 
     /**
      * End an item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postEnd(Request $request)
@@ -339,13 +349,14 @@ class ItemController extends Controller
         $item->end();
 
         return redirect('/inventory/unsold')
-            ->withStatus($item->name . ' has been ended early.');
+            ->withStatus($item->name.' has been ended early.');
     }
 
     /**
      * Cancel an item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postCancel(Request $request)
@@ -363,13 +374,14 @@ class ItemController extends Controller
         $item->cancel();
 
         return redirect('/inventory/unsold')
-            ->withStatus($item->name . ' has been cancelled.');
+            ->withStatus($item->name.' has been cancelled.');
     }
 
     /**
      * Watch an item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postWatch(Request $request)
@@ -388,13 +400,14 @@ class ItemController extends Controller
             'added' => time(),
         ]);
 
-        return redirect()->back()->withStatus($item->name . ' has been added to your watched items.');
+        return redirect()->back()->withStatus($item->name.' has been added to your watched items.');
     }
 
     /**
      * Unwatch an item.
      *
      * @param \Illuminate\Http\Request $request
+     *
      * @return \Illuminate\Http\RedirectResponse
      */
     public function postUnwatch(Request $request)
@@ -407,6 +420,6 @@ class ItemController extends Controller
 
         Auth::user()->watching()->detach($item);
 
-        return redirect()->back()->withStatus($item->name . ' has been removed from your watched items.');
+        return redirect()->back()->withStatus($item->name.' has been removed from your watched items.');
     }
 }

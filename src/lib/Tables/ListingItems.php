@@ -34,7 +34,7 @@ class ListingItems extends Table
     public $filters = [
         'Has' => [
             'No bids',
-            'Fixed price'
+            'Fixed price',
         ],
     ];
 

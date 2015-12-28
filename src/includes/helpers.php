@@ -23,25 +23,27 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
  * Get an instance of the redirector, prefixing it with the base url.
  *
  * @param string|null $to
- * @param int $status
- * @param array $headers
- * @param bool $secure
+ * @param int         $status
+ * @param array       $headers
+ * @param bool        $secure
+ *
  * @return \Illuminate\Routing\Redirector|\Illuminate\Http\RedirectResponse
  */
 function mustard_redirect($to = null, $status = 302, $headers = [], $secure = null)
 {
-    return redirect(env('MUSTARD_BASE', '') . $to, $status, $headers, $secure);
+    return redirect(env('MUSTARD_BASE', '').$to, $status, $headers, $secure);
 }
 
 /**
  * Convert a Markdown-formatted string to HTML.
  *
  * @param string $text
+ *
  * @return string
  */
 function mustard_markdown($text)
 {
-    $output = (new Parsedown)->text($text);
+    $output = (new Parsedown())->text($text);
 
     $output = str_replace('<p>', '<p class="large-12 columns">', $output);
 
@@ -54,6 +56,7 @@ function mustard_markdown($text)
  * Return a timestamp as a human-readable date string.
  *
  * @param int $timestamp
+ *
  * @return string
  */
 function mustard_date($timestamp)
@@ -65,6 +68,7 @@ function mustard_date($timestamp)
  * Return a timestamp as a human-readable date/time string.
  *
  * @param int $timestamp
+ *
  * @return string
  */
 function mustard_datetime($timestamp)
@@ -75,14 +79,17 @@ function mustard_datetime($timestamp)
 /**
  * Return a number formatted according to a locale's currency.
  *
- * @param mixed $number
- * @param bool $national
+ * @param mixed  $number
+ * @param bool   $national
  * @param string $locale
+ *
  * @return string
  */
 function mustard_price($number, $national = false, $locale = null)
 {
-    if (!is_numeric($number)) return $number;
+    if (!is_numeric($number)) {
+        return $number;
+    }
 
     if (is_null($locale)) {
         $locale = config('app.locale');
@@ -102,14 +109,17 @@ function mustard_price($number, $national = false, $locale = null)
 /**
  * Return a number formatted according to a locale.
  *
- * @param mixed $number
- * @param int $decimalPlaces
+ * @param mixed  $number
+ * @param int    $decimalPlaces
  * @param string $locale
+ *
  * @return string
  */
 function mustard_number($number, $decimalPlaces = 0, $locale = null)
 {
-    if (!is_numeric($number)) return $number;
+    if (!is_numeric($number)) {
+        return $number;
+    }
 
     if (is_null($locale)) {
         $locale = config('app.locale');
@@ -137,8 +147,9 @@ function mustard_number($number, $decimalPlaces = 0, $locale = null)
  * Return a date interval as a human-readable string.
  *
  * @param \DateInterval $diff
- * @param int $depth
- * @param bool $short
+ * @param int           $depth
+ * @param bool          $short
+ *
  * @return string
  */
 function mustard_time($diff, $depth = 4, $short = false)
@@ -146,43 +157,57 @@ function mustard_time($diff, $depth = 4, $short = false)
     $str = [];
 
     for ($i = 0; $i < 6; $i++) {
-        if (count($str) >= $depth) break;
+        if (count($str) >= $depth) {
+            break;
+        }
 
         switch ($i) {
             case 0:
-                if ($diff->y || $str) $str[] = $short
+                if ($diff->y || $str) {
+                    $str[] = $short
                     ? "{$diff->y}y"
                     : ($diff->y > 1 ? "{$diff->y} years" : "{$diff->y} year");
+                }
 
                 break;
             case 1:
-                if ($diff->m || $str) $str[] = $short
+                if ($diff->m || $str) {
+                    $str[] = $short
                     ? "{$diff->m}mo"
                     : ($diff->m > 1 ? "{$diff->m} months" : "{$diff->m} month");
+                }
 
                 break;
             case 2:
-                if ($diff->d || $str) $str[] = $short
+                if ($diff->d || $str) {
+                    $str[] = $short
                     ? "{$diff->d}d"
                     : ($diff->d > 1 ? "{$diff->d} days" : "{$diff->d} day");
+                }
 
                 break;
             case 3:
-                if ($diff->h || $str) $str[] = $short
+                if ($diff->h || $str) {
+                    $str[] = $short
                     ? "{$diff->h}h"
                     : ($diff->h > 1 ? "{$diff->h} hours" : "{$diff->h} hour");
+                }
 
                 break;
             case 4:
-                if ($diff->i || $str) $str[] = $short
+                if ($diff->i || $str) {
+                    $str[] = $short
                     ? "{$diff->i}m"
                     : ($diff->i > 1 ? "{$diff->i} minutes" : "{$diff->i} minute");
+                }
 
                 break;
             case 5:
-                if ($diff->s || $str) $str[] = $short
+                if ($diff->s || $str) {
+                    $str[] = $short
                     ? "{$diff->s}s"
                     : ($diff->s > 1 ? "{$diff->s} seconds" : "{$diff->s} second");
+                }
 
                 break;
         }
@@ -190,7 +215,7 @@ function mustard_time($diff, $depth = 4, $short = false)
 
     if ($diff->invert) {
         array_walk($str, function (&$item) {
-            $item = '-' . $item;
+            $item = '-'.$item;
         });
     }
 
@@ -201,9 +226,10 @@ function mustard_time($diff, $depth = 4, $short = false)
  * Return true if the Mustard module is loaded.
  *
  * @param string $module
+ *
  * @return bool
  */
 function mustard_loaded($module)
 {
-    return defined('MUSTARD_' . strtoupper($module));
+    return defined('MUSTARD_'.strtoupper($module));
 }

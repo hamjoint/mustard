@@ -21,8 +21,6 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard\Http\Controllers;
 
-use Hamjoint\Mustard\Item;
-
 class MetaController extends Controller
 {
     /**

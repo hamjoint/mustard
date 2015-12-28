@@ -23,10 +23,9 @@ namespace Hamjoint\Mustard\Http\Controllers;
 
 use Auth;
 use Hamjoint\Mustard\Tables\InventoryEnded;
-use Hamjoint\Mustard\Tables\InventorySelling;
 use Hamjoint\Mustard\Tables\InventoryScheduled;
+use Hamjoint\Mustard\Tables\InventorySelling;
 use Hamjoint\Mustard\Tables\InventoryWatching;
-use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
