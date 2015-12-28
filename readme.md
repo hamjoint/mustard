@@ -1,5 +1,12 @@
 ## Mustard
 
+[![StyleCI](https://styleci.io/repos/34023411/shield?style=flat)](https://styleci.io/repos/34023411)
+[![Build Status](https://travis-ci.org/hamjoint/mustard.svg)](https://travis-ci.org/hamjoint/mustard)
+[![Total Downloads](https://poser.pugx.org/hamjoint/mustard/d/total.svg)](https://packagist.org/packages/hamjoint/mustard)
+[![Latest Stable Version](https://poser.pugx.org/hamjoint/mustard/v/stable.svg)](https://packagist.org/packages/hamjoint/mustard)
+[![Latest Unstable Version](https://poser.pugx.org/hamjoint/mustard/v/unstable.svg)](https://packagist.org/packages/hamjoint/mustard)
+[![License](https://poser.pugx.org/hamjoint/mustard/license.svg)](https://packagist.org/packages/hamjoint/mustard)
+
 Mustard is an open source marketplace platform, similar to [eBay](http://www.ebay.com/). It is developed and maintained by [Hamjoint CIC](http://www.hamjoint.org/) for [Hamjoint Market](https://www.hamjoint.com/market), a marketplace dedicated to amateur radio and electronics.
 
 Mustard is dependent on several components of the [Laravel framework](http://laravel.com), and supports [Composer](https://getcomposer.org/) for dependency management. Building a Mustard-based application requires some knowledge of PHP development.
