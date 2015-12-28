@@ -82,19 +82,19 @@ class MustardTables extends Migration
             $table->text('description');
             $table->boolean('auction');
             $table->integer('quantity')->unsigned();
-            $table->decimal('start_price', 8, 2)->unsigned();
-            $table->decimal('reserve_price', 8, 2)->unsigned();
-            $table->decimal('bidding_price', 8, 2)->unsigned();
-            $table->decimal('fixed_price', 8, 2)->unsigned();
+            $table->decimal('start_price', 8, 2)->nullable()->unsigned();
+            $table->decimal('reserve_price', 8, 2)->nullable()->unsigned();
+            $table->decimal('bidding_price', 8, 2)->nullable()->unsigned();
+            $table->decimal('fixed_price', 8, 2)->nullable()->unsigned();
             $table->decimal('commission', 5, 2)->unsigned();
-            $table->integer('winning_bid_id')->unsigned();
+            $table->integer('winning_bid_id')->nullable()->unsigned();
             $table->integer('duration')->unsigned();
             $table->integer('start_date')->unsigned();
             $table->integer('end_date')->unsigned();
             $table->integer('created')->unsigned();
-            $table->string('collection_location');
+            $table->string('collection_location')->nullable();
             $table->boolean('payment_other');
-            $table->tinyInteger('returns_period')->unsigned();
+            $table->tinyInteger('returns_period')->nullable()->unsigned();
 
             $table->primary('item_id');
             $table->foreign('user_id')->references('user_id')->on('users');
