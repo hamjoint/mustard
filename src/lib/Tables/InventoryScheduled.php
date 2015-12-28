@@ -33,12 +33,12 @@ class InventoryScheduled extends Table
      * @var array
      */
     public $columnHeaders = [
-        'Item ID' => 'item_id',
-        'Name' => 'name',
-        'Duration' => 'duration',
-        'Details' => null,
+        'Item ID'     => 'item_id',
+        'Name'        => 'name',
+        'Duration'    => 'duration',
+        'Details'     => null,
         'Starting in' => 'starting_in',
-        'Options' => null,
+        'Options'     => null,
     ];
 
     /**

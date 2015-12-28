@@ -42,7 +42,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return UNIX timestamp for item's end.
      *
-     * @return integer
+     * @return int
      */
     public function getEndDate()
     {
@@ -86,7 +86,9 @@ class Item extends NonSequentialIdModel
      */
     public function getHighestBidAmount()
     {
-        if ($this->isFixed()) return null;
+        if ($this->isFixed()) {
+            return;
+        }
 
         return $this->bids->max('amount') ?: $this->startPrice;
     }
@@ -98,10 +100,9 @@ class Item extends NonSequentialIdModel
      */
     public function getListingPhoto()
     {
-        return $this->photos->filter(function($photo)
-        {
+        return $this->photos->filter(function ($photo) {
             return $photo->primary;
-        })->first() ?: new \Hamjoint\Mustard\Media\Photo;
+        })->first() ?: new \Hamjoint\Mustard\Media\Photo();
     }
 
     /**
@@ -120,7 +121,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if item can be collected by the buyer.
      *
-     * @return boolean
+     * @return bool
      */
     public function isCollectable()
     {
@@ -131,12 +132,12 @@ class Item extends NonSequentialIdModel
      * Return true if user has bid on the item.
      *
      * @param \Hamjoint\Mustard\User $user
-     * @return boolean
+     *
+     * @return bool
      */
     public function isBidder(User $user)
     {
-        return (bool) $this->bids()->whereHas('bidder', function($query) use ($user)
-        {
+        return (bool) $this->bids()->whereHas('bidder', function ($query) use ($user) {
             return $query->where('user_id', $user->userId);
         })->count();
     }
@@ -145,11 +146,14 @@ class Item extends NonSequentialIdModel
      * Return true if user has won the item.
      *
      * @param \Hamjoint\Mustard\User $user
-     * @return boolean
+     *
+     * @return bool
      */
     public function isWinner(User $user)
     {
-        if (!$this->auction || !$this->isEnded()) return false;
+        if (!$this->auction || !$this->isEnded()) {
+            return false;
+        }
 
         return (bool) ($this->winningBid && $this->winningBid->bidder == $user);
     }
@@ -158,12 +162,12 @@ class Item extends NonSequentialIdModel
      * Return true if user has ever purchased the item.
      *
      * @param \Hamjoint\Mustard\User $user
-     * @return boolean
+     *
+     * @return bool
      */
     public function isBuyer(User $user)
     {
-        return (bool) $this->purchases()->whereHas('buyer', function($query) use ($user)
-        {
+        return (bool) $this->purchases()->whereHas('buyer', function ($query) use ($user) {
             return $query->where('user_id', $user->userId);
         })->count();
     }
@@ -171,7 +175,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item is still active.
      *
-     * @return boolean
+     * @return bool
      */
     public function isActive()
     {
@@ -181,7 +185,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has started.
      *
-     * @return boolean
+     * @return bool
      */
     public function isStarted()
     {
@@ -191,7 +195,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has ended.
      *
-     * @return boolean
+     * @return bool
      */
     public function isEnded()
     {
@@ -201,7 +205,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item is has not reached a reserve price.
      *
-     * @return boolean
+     * @return bool
      */
     public function isReserved()
     {
@@ -211,7 +215,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has a fixed price.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasFixed()
     {
@@ -221,7 +225,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has a quantity.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasQuantity()
     {
@@ -231,7 +235,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has a reserve price.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasReserve()
     {
@@ -241,7 +245,7 @@ class Item extends NonSequentialIdModel
     /**
      * Return true if the item has bids.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasBids()
     {
@@ -251,13 +255,14 @@ class Item extends NonSequentialIdModel
     /**
      * Shortcut method for placing a bid.
      *
-     * @param float $amount
+     * @param float                  $amount
      * @param \Hamjoint\Mustard\User $user
+     *
      * @return void
      */
     public function placeBid($amount, User $user)
     {
-        $bid = new \Hamjoint\Mustard\Auctions\Bid;
+        $bid = new \Hamjoint\Mustard\Auctions\Bid();
 
         $bid->amount = $amount;
         $bid->placed = time();
@@ -277,7 +282,9 @@ class Item extends NonSequentialIdModel
         if (mustard_loaded('auctions') && $this->auction) {
             $bid = $this->getBidHistory()->first();
 
-            if ($bid) $this->winningBid()->associate($bid);
+            if ($bid) {
+                $this->winningBid()->associate($bid);
+            }
         }
 
         $now = time();
@@ -302,7 +309,9 @@ class Item extends NonSequentialIdModel
 
         $now = time();
 
-        if ($this->endDate > $now) $this->endDate = $now;
+        if ($this->endDate > $now) {
+            $this->endDate = $now;
+        }
 
         $this->save();
     }
@@ -311,7 +320,8 @@ class Item extends NonSequentialIdModel
      * Search the name and description of items for specific keywords.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $keyword
+     * @param string                                $keyword
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeKeywords($query, $keyword)
@@ -326,6 +336,7 @@ class Item extends NonSequentialIdModel
      * Scope of active items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeActive($query)
@@ -338,6 +349,7 @@ class Item extends NonSequentialIdModel
      * Scope of ended items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeEnded($query)
@@ -349,6 +361,7 @@ class Item extends NonSequentialIdModel
      * Scope of scheduled items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeScheduled($query)
@@ -360,6 +373,7 @@ class Item extends NonSequentialIdModel
      * Scope of auction items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeTypeAuction($query)
@@ -371,6 +385,7 @@ class Item extends NonSequentialIdModel
      * Scope of fixed-price items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeTypeFixed($query)
@@ -472,6 +487,7 @@ class Item extends NonSequentialIdModel
      * Return the minimum possible bid, respecting configured bid increments.
      *
      * @param float $currentAmount
+     *
      * @return float
      */
     public static function getMinimumBidAmount($currentAmount)
@@ -490,9 +506,10 @@ class Item extends NonSequentialIdModel
     /**
      * Return the total number of items.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalListed($since = 0, $until = null)
     {
@@ -506,9 +523,10 @@ class Item extends NonSequentialIdModel
     /**
      * Return the total number of watched items.
      *
-     * @param integer $since UNIX timestamp to optionally specify a lower selection boundary.
-     * @param integer $until UNIX timestamp to optionally specify an upper selection boundary.
-     * @return integer
+     * @param int $since UNIX timestamp to optionally specify a lower selection boundary.
+     * @param int $until UNIX timestamp to optionally specify an upper selection boundary.
+     *
+     * @return int
      */
     public static function totalWatched($since = 0, $until = null)
     {

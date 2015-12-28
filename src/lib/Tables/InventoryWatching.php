@@ -35,7 +35,7 @@ class InventoryWatching extends Table
     public $filters = [
         'Status' => [
             'Active',
-            'Ended'
+            'Ended',
         ],
     ];
 

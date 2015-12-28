@@ -33,12 +33,12 @@ class InventoryEnded extends Table
      * @var array
      */
     public $columnHeaders = [
-        'Item ID' => 'item_id',
-        'Name' => 'name',
-        'Duration' => 'duration',
-        'Details' => null,
+        'Item ID'    => 'item_id',
+        'Name'       => 'name',
+        'Duration'   => 'duration',
+        'Details'    => null,
         'Time ended' => 'time_ended',
-        'Options' => null,
+        'Options'    => null,
     ];
 
     /**

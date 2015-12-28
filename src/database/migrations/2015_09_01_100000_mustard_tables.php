@@ -21,8 +21,8 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 use Hamjoint\Mustard\ItemCondition;
 use Hamjoint\Mustard\ListingDuration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class MustardTables extends Migration
 {
@@ -33,8 +33,7 @@ class MustardTables extends Migration
      */
     public function up()
     {
-        Schema::create('users', function(Blueprint $table)
-        {
+        Schema::create('users', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
             $table->string('email', 64);
             $table->string('username', 64);
@@ -49,8 +48,7 @@ class MustardTables extends Migration
             $table->unique('email');
         });
 
-        Schema::create('categories', function(Blueprint $table)
-        {
+        Schema::create('categories', function (Blueprint $table) {
             $table->mediumInteger('category_id', true)->unsigned();
             $table->mediumInteger('parent_category_id')->nullable()->unsigned();
             $table->string('name', 128);
@@ -61,20 +59,17 @@ class MustardTables extends Migration
             $table->unique(['parent_category_id', 'slug']);
         });
 
-        Schema::create('item_conditions', function(Blueprint $table)
-        {
+        Schema::create('item_conditions', function (Blueprint $table) {
             $table->mediumInteger('item_condition_id', true)->unsigned();
             $table->string('name', 64);
         });
 
-        Schema::create('listing_durations', function(Blueprint $table)
-        {
+        Schema::create('listing_durations', function (Blueprint $table) {
             $table->mediumInteger('listing_duration_id', true)->unsigned();
             $table->integer('duration')->unsigned();
         });
 
-        Schema::create('items', function(Blueprint $table)
-        {
+        Schema::create('items', function (Blueprint $table) {
             $table->integer('item_id')->unsigned();
             $table->string('name', 128);
             $table->mediumInteger('item_condition_id')->unsigned();
@@ -101,8 +96,7 @@ class MustardTables extends Migration
             $table->foreign('item_condition_id')->references('item_condition_id')->on('item_conditions');
         });
 
-        Schema::create('item_categories', function(Blueprint $table)
-        {
+        Schema::create('item_categories', function (Blueprint $table) {
             $table->integer('item_id')->unsigned();
             $table->mediumInteger('category_id')->unsigned();
 
@@ -111,8 +105,7 @@ class MustardTables extends Migration
             $table->foreign('category_id')->references('category_id')->on('categories');
         });
 
-        Schema::create('delivery_options', function(Blueprint $table)
-        {
+        Schema::create('delivery_options', function (Blueprint $table) {
             $table->integer('delivery_option_id', true)->unsigned();
             $table->integer('item_id')->unsigned();
             $table->string('name', 64);
@@ -123,8 +116,7 @@ class MustardTables extends Migration
             $table->foreign('item_id')->references('item_id')->on('items');
         });
 
-        Schema::create('failed_jobs', function(Blueprint $table)
-        {
+        Schema::create('failed_jobs', function (Blueprint $table) {
             $table->increments('failed_job_id');
             $table->text('connection');
             $table->text('queue');
@@ -132,8 +124,7 @@ class MustardTables extends Migration
             $table->timestamp('failed_at');
         });
 
-        Schema::create('watched_items', function(Blueprint $table)
-        {
+        Schema::create('watched_items', function (Blueprint $table) {
             $table->integer('item_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->integer('added')->unsigned();
@@ -151,7 +142,7 @@ class MustardTables extends Migration
         ];
 
         foreach ($conditions as $condition) {
-            $item_condition = new ItemCondition;
+            $item_condition = new ItemCondition();
 
             $item_condition->name = $condition;
 
@@ -167,7 +158,7 @@ class MustardTables extends Migration
         ];
 
         foreach ($durations as $duration) {
-            $listing_duration = new ListingDuration;
+            $listing_duration = new ListingDuration();
 
             $listing_duration->duration = $duration;
 

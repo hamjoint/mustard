@@ -32,7 +32,7 @@ class AdminSettings extends Table
      * @var array
      */
     public $columnHeaders = [
-        'Key' => 'key',
+        'Key'   => 'key',
         'Value' => 'value',
     ];
 

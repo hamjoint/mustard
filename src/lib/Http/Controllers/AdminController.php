@@ -57,44 +57,40 @@ class AdminController extends Controller
     {
         $stats = [
             'Item stats' => [
-                'Listed' => function($range)
-                {
+                'Listed' => function ($range) {
                     return mustard_number(Cache::remember(
                         'total_items',
                         config('mustard.dashboard_cache'),
-                        function() use ($range) {
+                        function () use ($range) {
                             return Item::totalListed($range);
                         }
                     ));
                 },
-                'Watched' => function($range)
-                {
+                'Watched' => function ($range) {
                     return mustard_number(Cache::remember(
                         'total_items',
                         config('mustard.dashboard_cache'),
-                        function() use ($range) {
+                        function () use ($range) {
                             return Item::totalWatched($range);
                         }
                     ));
                 },
             ],
             'User stats' => [
-                'Registered' => function($range)
-                {
+                'Registered' => function ($range) {
                     return mustard_number(Cache::remember(
                         'total_users',
                         config('mustard.dashboard_cache'),
-                        function() use ($range) {
+                        function () use ($range) {
                             return User::totalRegistered($range);
                         }
                     ));
                 },
-                'Sellers' => function($range)
-                {
+                'Sellers' => function ($range) {
                     return mustard_number(Cache::remember(
                         'total_sellers',
                         config('mustard.dashboard_cache'),
-                        function() use ($range) {
+                        function () use ($range) {
                             return User::totalSellers($range);
                         }
                     ));
@@ -103,34 +99,31 @@ class AdminController extends Controller
         ];
 
         if (mustard_loaded('auctions')) {
-            $stats['User stats']['Bidders'] = function($range)
-            {
+            $stats['User stats']['Bidders'] = function ($range) {
                 return mustard_number(Cache::remember(
                     'total_bidders',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return User::totalBidders($range);
                     }
                 ));
             };
 
-            $stats['Item stats']['Bids placed'] = function($range)
-            {
+            $stats['Item stats']['Bids placed'] = function ($range) {
                 return mustard_number(Cache::remember(
                     'total_bids_placed',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return \Hamjoint\Mustard\Auctions\Bid::totalPlaced($range);
                     }
                 ));
             };
 
-            $stats['Item stats']['Average bid amount'] = function($range)
-            {
+            $stats['Item stats']['Average bid amount'] = function ($range) {
                 return mustard_price(Cache::remember(
                     'average_bids',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return \Hamjoint\Mustard\Auctions\Bid::averageAmount($range);
                     }
                 ));
@@ -138,34 +131,31 @@ class AdminController extends Controller
         }
 
         if (mustard_loaded('commerce')) {
-            $stats['User stats']['Buyers'] = function($range)
-            {
+            $stats['User stats']['Buyers'] = function ($range) {
                 return mustard_number(Cache::remember(
                     'total_buyers',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return User::totalBuyers($range);
                     }
                 ));
             };
 
-            $stats['Transaction stats']['Purchases'] = function($range)
-            {
+            $stats['Transaction stats']['Purchases'] = function ($range) {
                 return mustard_number(Cache::remember(
                     'total_purchases',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return \Hamjoint\Mustard\Commerce\Purchase::totalCreated($range);
                     }
                 ));
             };
 
-            $stats['Transaction stats']['Average amount'] = function($range)
-            {
+            $stats['Transaction stats']['Average amount'] = function ($range) {
                 return mustard_price(Cache::remember(
                     'average_purchases',
                     config('mustard.dashboard_cache'),
-                    function() use ($range) {
+                    function () use ($range) {
                         return \Hamjoint\Mustard\Commerce\Purchase::averageAmount($range);
                     }
                 ));
@@ -173,16 +163,16 @@ class AdminController extends Controller
         }
 
         $ranges = [
-            'Today' => strtotime('midnight'),
-            'This week' => strtotime('monday this week'),
+            'Today'      => strtotime('midnight'),
+            'This week'  => strtotime('monday this week'),
             'This month' => strtotime('midnight first day of this month'),
-            'This year' => strtotime(date('Y') . '/01/01'),
-            'Overall' => 0,
+            'This year'  => strtotime(date('Y').'/01/01'),
+            'Overall'    => 0,
         ];
 
         return view('mustard::admin.dashboard', [
             'ranges' => $ranges,
-            'stats' => $stats,
+            'stats'  => $stats,
         ]);
     }
 
@@ -203,7 +193,7 @@ class AdminController extends Controller
         $table->with('parent');
 
         return view('mustard::admin.categories', [
-            'table' => $table,
+            'table'      => $table,
             'categories' => $table->paginate(),
         ]);
     }
@@ -239,7 +229,7 @@ class AdminController extends Controller
         $table = new AdminItemConditions(ItemCondition::query());
 
         return view('mustard::admin.item-conditions', [
-            'table' => $table,
+            'table'           => $table,
             'item_conditions' => $table->paginate(),
         ]);
     }
@@ -254,7 +244,7 @@ class AdminController extends Controller
         $table = new AdminListingDurations(ListingDuration::query());
 
         return view('mustard::admin.listing-durations', [
-            'table' => $table,
+            'table'             => $table,
             'listing_durations' => $table->paginate(),
         ]);
     }
@@ -296,7 +286,7 @@ class AdminController extends Controller
         $table = new AdminSettings($config);
 
         return view('mustard::admin.settings', [
-            'table' => $table,
+            'table'    => $table,
             'settings' => $table->paginate(),
         ]);
     }
@@ -323,9 +313,9 @@ class AdminController extends Controller
         $this->validates(
             $request->all(),
             [
-                'users' => 'required',
+                'users'   => 'required',
                 'subject' => 'required|min:4',
-                'body' => 'required|min:10',
+                'body'    => 'required|min:10',
             ]
         );
 
@@ -337,9 +327,9 @@ class AdminController extends Controller
                     $request->input('subject'),
                     'emails.mailout',
                     [
-                        'body' => $request->input('body'),
+                        'body'   => $request->input('body'),
                         'handle' => $user->getHandle(),
-                        'email' => $user->email,
+                        'email'  => $user->email,
                         'joined' => $user->joined,
                     ]
                 );

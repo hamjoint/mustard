@@ -32,10 +32,10 @@ class AdminUsers extends Table
      * @var array
      */
     public $columnHeaders = [
-        'User ID' => 'user_id',
-        'Username' => 'username',
-        'Email' => 'email',
-        'Joined' => 'joined',
+        'User ID'    => 'user_id',
+        'Username'   => 'username',
+        'Email'      => 'email',
+        'Joined'     => 'joined',
         'Last login' => 'last_login',
     ];
 

@@ -34,22 +34,22 @@ class MustardServiceProvider extends ServiceProvider
     {
         // Include routes
         if (!$this->app->routesAreCached()) {
-            require __DIR__ . '/../../includes/routes.php';
+            require __DIR__.'/../../includes/routes.php';
         }
 
         // Load views
-        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'mustard');
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'mustard');
 
         // Publish migrations
         $this->publishes([
-            __DIR__ . '/../../database/migrations/' => database_path('migrations')
+            __DIR__.'/../../database/migrations/' => database_path('migrations'),
         ], 'migrations');
 
         // Merge config
-        $this->mergeConfigFrom(__DIR__ . '/../../includes/config.php', 'mustard');
+        $this->mergeConfigFrom(__DIR__.'/../../includes/config.php', 'mustard');
 
         // Include validators
-        require __DIR__ . '/../../includes/validators.php';
+        require __DIR__.'/../../includes/validators.php';
     }
 
     /**

@@ -39,6 +39,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * database columns.
      *
      * @param string $property
+     *
      * @return mixed
      */
     public function __get($property)
@@ -73,7 +74,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
      * Mustard uses camel case for class properties, and snake case for database columns.
      *
      * @param string $property
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function __set($property, $value)
     {
@@ -82,7 +83,7 @@ abstract class Model extends \Illuminate\Database\Eloquent\Model
 
     public function getUrlAttribute()
     {
-        return '/' . strtolower(class_basename(static::class)) . '/' . $this->getKey() . '/' . $this->slug;
+        return '/'.strtolower(class_basename(static::class)).'/'.$this->getKey().'/'.$this->slug;
     }
 
     public function getSlugAttribute()
