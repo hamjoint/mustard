@@ -11,6 +11,7 @@
     </div>
     <div class="medium-9 large-10 columns">
         <form method="post" action="/account/email" data-abide="true" class="content" id="email">
+            {!! csrf_field() !!}
             <fieldset>
                 <div class="row">
                     <div class="medium-4 columns">
