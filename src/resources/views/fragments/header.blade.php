@@ -20,7 +20,7 @@
                     <form method="GET" action="{{ Request::is('buy/*') ? "" : "/buy" }}">
                         <div class="row collapse">
                             <div class="large-8 small-9 columns">
-                                <input type="search" name="q" value="{{ Input::get('q') }}" placeholder="Enter a search term" />
+                                <input type="search" name="q" value="{{ Request::input('q') }}" placeholder="Enter a search term" />
                             </div>
                             <div class="large-4 small-3 columns">
                                 <button type="submit" class="alert button expand">Search</button>
