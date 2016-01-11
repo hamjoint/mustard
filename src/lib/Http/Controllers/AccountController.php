@@ -23,6 +23,7 @@ namespace Hamjoint\Mustard\Http\Controllers;
 
 use Auth;
 use Hamjoint\Mustard\User;
+use Hash;
 use Illuminate\Http\Request;
 
 class AccountController extends Controller
@@ -64,7 +65,7 @@ class AccountController extends Controller
             ]
         );
 
-        if (!\Hash::check($request->get('old_password'), Auth::user()->password_hash)) {
+        if (!Hash::check($request->get('old_password'), Auth::user()->password_hash)) {
             return redirect()->back()
                 ->withErrors(['old_password' => 'Your old password is not correct.']);
         }
@@ -73,7 +74,7 @@ class AccountController extends Controller
             return redirect()->back();
         }
 
-        Auth::user()->passwordHash = \Hash::make($request->get('new_password'));
+        Auth::user()->passwordHash = Hash::make($request->get('new_password'));
 
         Auth::user()->save();
 
@@ -83,7 +84,7 @@ class AccountController extends Controller
         );
 
         return redirect()->back()
-            ->with('message', 'Your password has been changed.');
+            ->withStatus('Your password has been changed.');
     }
 
     /**
@@ -105,8 +106,8 @@ class AccountController extends Controller
      */
     public function postEmail(Request $request)
     {
-        $this->validates(
-            $request->all(),
+        $this->validate(
+            $request,
             [
                 'email' => 'required|email',
             ]
@@ -121,29 +122,21 @@ class AccountController extends Controller
                 ->withErrors(['email' => 'That email address is in use by another account.']);
         }
 
+        // Notify the old email
         Auth::user()->sendEmail(
             'Your email address has been changed',
-            'emails.account.email-changed',
+            'mustard::emails.account.email-changed',
             ['new_email' => $request->get('email')]
         );
 
         Auth::user()->email = $request->get('email');
 
-        Auth::user()->sendEmail(
-            'Verify your new email address',
-            'emails.account.verify',
-            [
-                'key'         => Auth::user()->addVerification(),
-                'new_account' => false,
-            ]
-        );
-
-        Auth::user()->verified = false;
+        Auth::user()->unverify();
 
         Auth::user()->save();
 
         return redirect()->back()
-            ->with('message', 'Your email address has been changed.');
+            ->withStatus('Your email address has been changed.');
     }
 
     /**
