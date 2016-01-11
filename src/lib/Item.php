@@ -86,9 +86,7 @@ class Item extends NonSequentialIdModel
      */
     public function getHighestBidAmount()
     {
-        if ($this->isFixed()) {
-            return;
-        }
+        if (!mustard_loaded('auctions') || !$this->auction) return null;
 
         return $this->bids->max('amount') ?: $this->startPrice;
     }
@@ -394,6 +392,17 @@ class Item extends NonSequentialIdModel
     }
 
     /**
+     * Scope of fixed-price items.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWinning($query)
+    {
+        return $query->where('auction', false);
+    }
+
+    /**
      * Relationship to bids.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -481,26 +490,6 @@ class Item extends NonSequentialIdModel
     public function winningBid()
     {
         return $this->belongsTo('\Hamjoint\Mustard\Auctions\Bid', 'winning_bid_id');
-    }
-
-    /**
-     * Return the minimum possible bid, respecting configured bid increments.
-     *
-     * @param float $currentAmount
-     *
-     * @return float
-     */
-    public static function getMinimumBidAmount($currentAmount)
-    {
-        $bid_increments = \Hamjoint\Mustard\Auctions\BidIncrement::orderBy('increment', 'asc')->get();
-
-        foreach ($bid_increments as $bid_increment) {
-            if ($currentAmount < $bid_increment->increment) {
-                return $currentAmount + $bid_increment->increment;
-            }
-        }
-
-        return $currentAmount + $bid_increments->max('increment');
     }
 
     /**
