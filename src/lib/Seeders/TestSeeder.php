@@ -113,8 +113,6 @@ class TestSeeder extends Seeder
 
         DB::connection()->disableQueryLog();
 
-        Model::unguard();
-
         $this->now = time();
 
         $this->itemConditions = ItemCondition::all();
@@ -426,7 +424,5 @@ class TestSeeder extends Seeder
                 }
             }
         }
-
-        Model::reguard();
     }
 }
