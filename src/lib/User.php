@@ -29,10 +29,13 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Collection;
+use LaravelVerifyEmails\Auth\VerifyEmails\CanVerifyEmail;
+use LaravelVerifyEmails\Contracts\Auth\CanVerifyEmail as CanVerifyEmailContract;
+use Mail;
 
-class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
+class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, CanVerifyEmailContract
 {
-    use Authenticatable, Authorizable, CanResetPassword;
+    use Authenticatable, Authorizable, CanResetPassword, CanVerifyEmail;
 
     /**
      * The database table used by the model.
@@ -67,12 +70,12 @@ class User extends NonSequentialIdModel implements AuthenticatableContract, Auth
         $vars['email'] = $email = $this->email;
         $vars['username'] = $username = $this->username;
 
-        \Mail::queue(['text' => $view], $vars, function ($message) use ($email, $username, $subject) {
+        Mail::queue(['text' => $view], $vars, function ($message) use ($email, $username, $subject) {
             $message->subject($subject)
                 ->to($email, $username)
                 ->replyTo(
-                    config('mail.reply_to.address'),
-                    config('mail.reply_to.name')
+                    config('mustard.support.email'),
+                    config('mustard.support.name')
                 );
         });
     }
