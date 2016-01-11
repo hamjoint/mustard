@@ -32,8 +32,12 @@ class MetaController extends Controller
     {
         $front_page = config('mustard.front_page', '/buy');
 
-        return view()->exists(config('mustard.front_page'))
-            ? view(config('mustard.front_page'))
-            : mustard_redirect(config('mustard.front_page'));
+        if (view()->exists(config('mustard.front_page'))) {
+            return view(config('mustard.front_page'));
+        }
+
+        session()->reflash();
+
+        return mustard_redirect(config('mustard.front_page'));
     }
 }
