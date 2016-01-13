@@ -172,4 +172,36 @@ class AccountController extends Controller
     {
         return view('mustard::account.close');
     }
+
+    /**
+     * Close an account.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function postClose(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'confirm' => 'required|regex:/close my account/',
+            ]
+        );
+
+        Auth::user()->watching()->detach();
+
+        if (mustard_loaded('commerce')) {
+            Auth::user()->bankDetails()->delete();
+        }
+
+        if (mustard_loaded('feedback')) {
+            Auth::user()->feedbackReceived()->update(['subject_user_id' => null]);
+        }
+
+        if (mustard_loaded('messaging')) {
+            Auth::user()->messages()->delete();
+        }
+
+        return redirect()->back()
+            ->withStatus('Your account has been closed.');
+    }
 }
