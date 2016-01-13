@@ -36,8 +36,8 @@
             </ul>
             <ul class="right">
                 @if (Auth::guest())
-                    <li><a href="/auth/register"><i class="fa fa-check-square-o"></i> Register an account</a></li>
-                    <li><a href="/auth/login"><i class="fa fa-sign-in"></i> Log in</a></li>
+                    <li><a href="/register"><i class="fa fa-check-square-o"></i> Register an account</a></li>
+                    <li><a href="/login"><i class="fa fa-sign-in"></i> Log in</a></li>
                 @else
                     <li>
                         <a href="/admin"><i class="fa fa-briefcase"></i> Admin</a>
