@@ -35,9 +35,9 @@ class MustardTables extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->integer('user_id')->unsigned();
-            $table->string('email', 64);
+            $table->string('email', 64)->nullable();
             $table->string('username', 64);
-            $table->string('password', 64);
+            $table->string('password', 64)->nullable();
             $table->rememberToken();
             $table->char('locale', 5);
             $table->char('currency', 3);
@@ -175,6 +175,7 @@ class MustardTables extends Migration
     {
         Schema::drop('watched_items');
         Schema::drop('failed_jobs');
+        Schema::drop('delivery_options');
         Schema::drop('item_categories');
         Schema::drop('items');
         Schema::drop('item_conditions');
