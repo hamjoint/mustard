@@ -150,7 +150,7 @@ class TestSeeder extends Seeder
 
             $user->username = $this->faker->userName; while (User::findByEmail($user->email = $this->faker->email));
             $user->password = Hash::make('password');
-            //$user->verified = true;
+            $user->verified = true;
             $user->joined = mt_rand($this->now - mt_rand(0, 86400 * 200), $this->now);
             $user->locale = $this->faker->locale;
             $user->currency = $this->faker->currencyCode;
