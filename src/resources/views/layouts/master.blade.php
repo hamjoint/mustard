@@ -228,7 +228,7 @@
                         intrange: /^[0-9]+(-[0-9]+)?$/,
                         account_number: /^[0-9]{4} ?[0-9]{4}$/,
                         sort_code: /^[0-9]{2}-[0-9]{2}-[0-9]{2}$|^[0-9]{6}$/,
-                        close_account: /delete my account/
+                        close_account: /close my account/
                     }
                 },
                 dropdown: {
