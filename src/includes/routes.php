@@ -35,6 +35,7 @@ Route::group([
         Route::get('account/notifications', 'AccountController@getNotifications');
         Route::post('account/notifications', 'AccountController@postNotifications');
         Route::get('account/close', 'AccountController@getClose');
+        Route::post('account/close', 'AccountController@postClose');
 
         Route::get('inventory', ['uses' => 'InventoryController@getIndex']);
         Route::get('inventory/watching', ['uses' => 'InventoryController@getWatching']);
