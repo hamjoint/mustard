@@ -29,13 +29,11 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Support\Collection;
-use LaravelVerifyEmails\Auth\VerifyEmails\CanVerifyEmail;
-use LaravelVerifyEmails\Contracts\Auth\CanVerifyEmail as CanVerifyEmailContract;
 use Mail;
 
-class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, CanVerifyEmailContract
+class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use Authenticatable, Authorizable, CanResetPassword, CanVerifyEmail;
+    use Authenticatable, Authorizable, CanResetPassword;
 
     /**
      * The database table used by the model.
