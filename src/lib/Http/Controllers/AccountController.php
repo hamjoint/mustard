@@ -33,7 +33,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function getIndex()
+    public function index()
     {
         return mustard_redirect('/account/password');
     }
@@ -43,7 +43,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getPassword()
+    public function showChangePasswordForm()
     {
         return view('mustard::account.password', [
             'page' => 'password',
@@ -55,36 +55,38 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postPassword(Request $request)
+    public function changePassword(Request $request)
     {
-        $this->validates(
-            $request->all(),
+        $this->validate(
+            $request,
             [
                 'old_password' => 'required',
                 'new_password' => 'required|min:8',
             ]
         );
 
-        if (!Hash::check($request->get('old_password'), Auth::user()->password_hash)) {
-            return redirect()->back()
-                ->withErrors(['old_password' => 'Your old password is not correct.']);
+        if (!Hash::check($request->input('old_password'), Auth::user()->password)) {
+            return redirect()->back()->withErrors([
+                'old_password' => trans('mustard::account.password_incorrect')
+            ]);
         }
 
-        if ($request->get('old_password') == $request->get('new_password')) {
-            return redirect()->back();
+        if ($request->input('old_password') == $request->input('new_password')) {
+            return redirect()->back()->withErrors([
+                'new_password' => trans('mustard::account.password_same')
+            ]);
         }
 
-        Auth::user()->passwordHash = Hash::make($request->get('new_password'));
+        Auth::user()->password = Hash::make($request->input('new_password'));
 
         Auth::user()->save();
 
         Auth::user()->sendEmail(
-            'Your password has been changed',
-            'emails.account.password-changed'
+            trans('mustard::account.password_changed'),
+            'mustard::emails.account.password-changed'
         );
 
-        return redirect()->back()
-            ->withStatus('Your password has been changed.');
+        return redirect()->back()->withStatus(trans('mustard::account.password_changed'));
     }
 
     /**
@@ -92,7 +94,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getEmail()
+    public function showChangeEmailForm()
     {
         return view('mustard::account.email', [
             'page' => 'email',
@@ -104,7 +106,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postEmail(Request $request)
+    public function changeEmail(Request $request)
     {
         $this->validate(
             $request,
@@ -114,29 +116,33 @@ class AccountController extends Controller
         );
 
         if ($request->get('email') == Auth::user()->email) {
-            return redirect()->back();
+            return redirect()->back()->withErrors([
+                'email' => trans('mustard::account.email_same')
+            ]);
         }
 
         if (User::findByEmail($request->get('email'))) {
-            return redirect()->back()
-                ->withErrors(['email' => 'That email address is in use by another account.']);
+            return redirect()->back()->withErrors([
+                'email' => trans('mustard::account.email_exists')
+            ]);
         }
 
         // Notify the old email
         Auth::user()->sendEmail(
-            'Your email address has been changed',
+            trans('mustard::account.email_changed'),
             'mustard::emails.account.email-changed',
             ['new_email' => $request->get('email')]
         );
 
         Auth::user()->email = $request->get('email');
 
-        Auth::user()->unverify();
+        if (method_exists('unverify', Auth::user())) {
+            Auth::user()->unverify();
+        }
 
         Auth::user()->save();
 
-        return redirect()->back()
-            ->withStatus('Your email address has been changed.');
+        return redirect()->back()->withStatus(trans('mustard::account.email_changed'));
     }
 
     /**
@@ -144,7 +150,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getNotifications()
+    public function showChangeNotificationsForm()
     {
         return view('mustard::account.notifications', [
             'page' => 'notifications',
@@ -158,7 +164,7 @@ class AccountController extends Controller
      *
      * @todo Add logic
      */
-    public function postNotifications()
+    public function changeNotifications()
     {
         return redirect()->back();
     }
@@ -168,7 +174,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getClose()
+    public function showCloseAccountForm()
     {
         return view('mustard::account.close');
     }
@@ -178,7 +184,7 @@ class AccountController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postClose(Request $request)
+    public function closeAccount(Request $request)
     {
         $this->validate(
             $request,
@@ -201,7 +207,6 @@ class AccountController extends Controller
             Auth::user()->messages()->delete();
         }
 
-        return redirect()->back()
-            ->withStatus('Your account has been closed.');
+        return redirect()->back()->withStatus(trans('mustard::account.close_confirmed'));
     }
 }

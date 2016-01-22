@@ -27,15 +27,15 @@ Route::group([
     Route::group([
         'middleware' => 'auth',
     ], function () {
-        Route::get('account', 'AccountController@getIndex');
-        Route::get('account/password', 'AccountController@getPassword');
-        Route::post('account/password', 'AccountController@postPassword');
-        Route::get('account/email', 'AccountController@getEmail');
-        Route::post('account/email', 'AccountController@postEmail');
-        Route::get('account/notifications', 'AccountController@getNotifications');
-        Route::post('account/notifications', 'AccountController@postNotifications');
-        Route::get('account/close', 'AccountController@getClose');
-        Route::post('account/close', 'AccountController@postClose');
+        Route::get('account', 'AccountController@index');
+        Route::get('account/password', 'AccountController@showChangePasswordForm');
+        Route::post('account/password', 'AccountController@changePassword');
+        Route::get('account/email', 'AccountController@showChangeEmailForm');
+        Route::post('account/email', 'AccountController@changeEmail');
+        Route::get('account/notifications', 'AccountController@showChangeNotificationsForm');
+        Route::post('account/notifications', 'AccountController@changeNotifications');
+        Route::get('account/close', 'AccountController@showCloseAccountForm');
+        Route::post('account/close', 'AccountController@closeAccount');
 
         Route::get('inventory', ['uses' => 'InventoryController@getIndex']);
         Route::get('inventory/watching', ['uses' => 'InventoryController@getWatching']);
@@ -55,16 +55,16 @@ Route::group([
         Route::post('item/watch', 'ItemController@postWatch');
         Route::post('item/unwatch', 'ItemController@postUnwatch');
 
-        Route::get('admin', 'AdminController@getIndex');
-        Route::get('admin/dashboard', 'AdminController@getDashboard');
-        Route::get('admin/items', 'AdminController@getItems');
-        Route::get('admin/categories', 'AdminController@getCategories');
-        Route::get('admin/users', 'AdminController@getUsers');
-        Route::get('admin/item-conditions', 'AdminController@getItemConditions');
-        Route::get('admin/listing-durations', 'AdminController@getListingDurations');
-        Route::get('admin/mailout', 'AdminController@getMailout');
-        Route::post('admin/mailout', 'AdminController@postMailout');
-        Route::get('admin/settings', 'AdminController@getSettings');
+        Route::get('admin', 'AdminController@index');
+        Route::get('admin/dashboard', 'AdminController@showDashboard');
+        Route::get('admin/categories', 'AdminController@showCategoriesTable');
+        Route::get('admin/items', 'AdminController@showItemsTable');
+        Route::get('admin/users', 'AdminController@showUsersTable');
+        Route::get('admin/item-conditions', 'AdminController@showItemConditionsTable');
+        Route::get('admin/listing-durations', 'AdminController@showListingDurationsTable');
+        Route::get('admin/mailout', 'AdminController@showMailoutForm');
+        Route::post('admin/mailout', 'AdminController@sendMailout');
+        Route::get('admin/settings', 'AdminController@showSettingsForm');
     });
 
     Route::get('buy', ['uses' => 'ListingController@getIndex']);

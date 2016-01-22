@@ -53,7 +53,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getDashboard()
+    public function showDashboard()
     {
         $stats = [
             'Item stats' => [
@@ -181,7 +181,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getCategories()
+    public function showCategoriesTable()
     {
         $categories = Category::query()
             ->leftJoin('items')
@@ -203,7 +203,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getItems()
+    public function showItemsTable()
     {
         $table = new AdminItems(Item::query());
 
@@ -224,7 +224,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getItemConditions()
+    public function showItemConditionsTable()
     {
         $table = new AdminItemConditions(ItemCondition::query());
 
@@ -239,7 +239,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getListingDurations()
+    public function showListingDurationsTable()
     {
         $table = new AdminListingDurations(ListingDuration::query());
 
@@ -254,7 +254,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getUsers()
+    public function showUsersTable()
     {
         $table = new AdminUsers(User::query());
 
@@ -273,7 +273,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getSettings()
+    public function showSettingsTable()
     {
         $config = config('mustard');
 
@@ -296,7 +296,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function getMailout()
+    public function showMailoutForm()
     {
         return view('mustard::admin.mailout', [
             'users' => User::orderBy('username', 'asc')->get(),
@@ -308,7 +308,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function postMailout(Request $request)
+    public function sendMailout(Request $request)
     {
         $this->validates(
             $request->all(),
