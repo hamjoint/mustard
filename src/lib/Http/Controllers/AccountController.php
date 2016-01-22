@@ -67,13 +67,13 @@ class AccountController extends Controller
 
         if (!Hash::check($request->input('old_password'), Auth::user()->password)) {
             return redirect()->back()->withErrors([
-                'old_password' => trans('mustard::account.password_incorrect')
+                'old_password' => trans('mustard::account.password_incorrect'),
             ]);
         }
 
         if ($request->input('old_password') == $request->input('new_password')) {
             return redirect()->back()->withErrors([
-                'new_password' => trans('mustard::account.password_same')
+                'new_password' => trans('mustard::account.password_same'),
             ]);
         }
 
@@ -117,13 +117,13 @@ class AccountController extends Controller
 
         if ($request->get('email') == Auth::user()->email) {
             return redirect()->back()->withErrors([
-                'email' => trans('mustard::account.email_same')
+                'email' => trans('mustard::account.email_same'),
             ]);
         }
 
         if (User::findByEmail($request->get('email'))) {
             return redirect()->back()->withErrors([
-                'email' => trans('mustard::account.email_exists')
+                'email' => trans('mustard::account.email_exists'),
             ]);
         }
 

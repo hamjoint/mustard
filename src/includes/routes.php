@@ -21,8 +21,8 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 Route::group([
     'middleware' => 'web',
-    'prefix'    => env('MUSTARD_BASE', ''),
-    'namespace' => 'Hamjoint\Mustard\Http\Controllers',
+    'prefix'     => env('MUSTARD_BASE', ''),
+    'namespace'  => 'Hamjoint\Mustard\Http\Controllers',
 ], function () {
     Route::group([
         'middleware' => 'auth',
