@@ -147,7 +147,7 @@
         @else
             @include('mustard::fragments.header')
         @endif
-        @if (isset($errors) && $errors->any())
+        @if ($errors->any())
             @include('mustard::fragments.errors')
         @endif
         @if (isset($status) || $status = session('status'))
