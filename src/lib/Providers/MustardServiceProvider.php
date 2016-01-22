@@ -40,6 +40,9 @@ class MustardServiceProvider extends ServiceProvider
         // Load views
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'mustard');
 
+        // Load translations
+        $this->loadTranslationsFrom(__DIR__.'/../../resources/lang', 'mustard');
+
         // Publish migrations
         $this->publishes([
             __DIR__.'/../../database/migrations/' => database_path('migrations'),
