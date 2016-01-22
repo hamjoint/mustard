@@ -23,6 +23,7 @@ Mustard is dependent on several components of the [Laravel framework](http://lar
 * Stripe support (via [mustard-stripe](https://github.com/hamjoint/mustard-stripe) module)
 * Messaging (via [mustard-messaging](https://github.com/hamjoint/mustard-messaging) module)
 * Photo & video uploads (via [mustard-media](https://github.com/hamjoint/mustard-media) module)
+* Helpdesk & dispute resolution (via [mustard-helpdesk](https://github.com/hamjoint/mustard-helpdesk) module)
 * Full documentation
 
 ### Requirements
