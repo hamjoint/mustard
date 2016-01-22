@@ -33,19 +33,19 @@ class MustardTables extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned();
-            $table->string('email', 64)->nullable();
-            $table->string('username', 64);
-            $table->string('password', 64)->nullable();
-            $table->rememberToken();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('name', 64)->change();
+            $table->string('email', 64)->nullable()->change();
+            $table->string('password', 64)->nullable()->change();
             $table->char('locale', 5);
             $table->char('currency', 3);
             $table->integer('joined')->unsigned();
             $table->integer('last_login')->unsigned();
 
-            $table->primary('user_id');
-            $table->unique('email');
+            $table->renameColumn('id', 'user_id');
+            $table->renameColumn('name', 'username');
+            $table->dropColumn('created_at');
+            $table->dropColumn('updated_at');
         });
 
         Schema::create('categories', function (Blueprint $table) {
@@ -181,6 +181,19 @@ class MustardTables extends Migration
         Schema::drop('item_conditions');
         Schema::drop('listing_durations');
         Schema::drop('categories');
-        Schema::drop('users');
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('username', 255)->change();
+            $table->string('email', 255)->change();
+            $table->string('password', 60)->change();
+            $table->dropColumn('locale');
+            $table->dropColumn('currency');
+            $table->dropColumn('joined');
+            $table->dropColumn('last_login');
+            $table->timestamps();
+
+            $table->renameColumn('user_id', 'id');
+            $table->renameColumn('username', 'name');
+        });
     }
 }
