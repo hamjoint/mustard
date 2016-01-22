@@ -27,7 +27,6 @@ use Hamjoint\Mustard\Category;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
 use Hamjoint\Mustard\ListingDuration;
-use Hamjoint\Mustard\Model;
 use Hamjoint\Mustard\User;
 use Hash;
 use Illuminate\Database\Seeder;

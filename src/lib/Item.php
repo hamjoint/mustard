@@ -86,7 +86,9 @@ class Item extends NonSequentialIdModel
      */
     public function getHighestBidAmount()
     {
-        if (!mustard_loaded('auctions') || !$this->auction) return null;
+        if (!mustard_loaded('auctions') || !$this->auction) {
+            return;
+        }
 
         return $this->bids->max('amount') ?: $this->startPrice;
     }
@@ -395,6 +397,7 @@ class Item extends NonSequentialIdModel
      * Scope of fixed-price items.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
+     *
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeWinning($query)
