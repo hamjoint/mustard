@@ -16,16 +16,20 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "^5.0",
+        "doctrine/dbal": "^2.5",
         "pda/pheanstalk": "^3.0",
         "erusev/parsedown": "^1.5",
         "tjbp/eloquent-joins": "@dev",
         "tjbp/tablelegs": "@dev",
         "tjbp/countries": "@dev",
-        "dansmith/laravel5-foundation": "^0.3"
+        "dansmith/laravel5-foundation": "dev-master"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.5",
-        "phpunit/phpunit": "^4.0"
+        "phpunit/phpunit": "^4.0",
+        "symfony/css-selector": "2.8.*|3.0.*",
+        "symfony/dom-crawler": "2.8.*|3.0.*",
+        "laravel/laravel": "dev-master"
     },
     "autoload": {
         "psr-4": {
@@ -33,6 +37,11 @@
         },
         "files": [
             "src/includes/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/TestCase.php"
         ]
     }
 }
