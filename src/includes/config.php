@@ -20,5 +20,10 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 return [
-    'front_page' => '/buy',
+    'uri_base' => env('MUSTARD_BASE', ''),
+    'front_page' => env('MUSTARD_ROOT_REDIRECT', '/buy'),
+    'support' => [
+        'email' => env('MUSTARD_SUPPORT_EMAIL', ''),
+        'name' => env('MUSTARD_SUPPORT_NAME', ''),
+    ],
 ];
