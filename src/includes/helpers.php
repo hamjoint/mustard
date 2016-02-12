@@ -31,7 +31,7 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
  */
 function mustard_redirect($to = null, $status = 302, $headers = [], $secure = null)
 {
-    return redirect(env('MUSTARD_BASE', '').$to, $status, $headers, $secure);
+    return redirect(config('mustard.uri_base').$to, $status, $headers, $secure);
 }
 
 /**

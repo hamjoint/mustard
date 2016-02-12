@@ -21,7 +21,7 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 Route::group([
     'middleware' => 'web',
-    'prefix'     => env('MUSTARD_BASE', ''),
+    'prefix'     => config('mustard.uri_base'),
     'namespace'  => 'Hamjoint\Mustard\Http\Controllers',
 ], function () {
     Route::group([
