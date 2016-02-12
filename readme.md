@@ -1,4 +1,4 @@
-## Mustard
+# Mustard
 
 [![StyleCI](https://styleci.io/repos/34023411/shield?style=flat)](https://styleci.io/repos/34023411)
 [![Build Status](https://travis-ci.org/hamjoint/mustard.svg)](https://travis-ci.org/hamjoint/mustard)
@@ -11,7 +11,7 @@ Mustard is an open source marketplace platform, similar to [eBay](http://www.eba
 
 Mustard is dependent on several components of the [Laravel framework](http://laravel.com), and supports [Composer](https://getcomposer.org/) for dependency management. Building a Mustard-based application requires some knowledge of PHP development.
 
-### Features
+## Features
 
 * User accounts
 * Classifieds adverts
@@ -26,18 +26,18 @@ Mustard is dependent on several components of the [Laravel framework](http://lar
 * Helpdesk & dispute resolution (via [mustard-helpdesk](https://github.com/hamjoint/mustard-helpdesk) module)
 * Full documentation
 
-### Requirements
+## Requirements
 
 See composer.json.
 
-### Installation
+## Installation
 
-#### Via Composer (using Packagist)
+### Via Composer (using Packagist)
 
 ```sh
 composer require hamjoint/mustard
 ```
 
-### Licence
+## Licence
 
 Mustard is free and gratis software licensed under the [GPL3 licence](https://www.gnu.org/licenses/gpl-3.0). This allows you to use Mustard for commercial purposes, but any derivative works (adaptations to the code) must also be released under the same licence. Mustard is built upon the [Laravel framework](http://laravel.com), which is licensed under the [MIT licence](http://opensource.org/licenses/MIT).
