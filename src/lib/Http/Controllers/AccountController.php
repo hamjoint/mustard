@@ -171,8 +171,8 @@ class AccountController extends Controller
             ]
         );
 
-        foreach ($request->input('notifications') as $notification) {
-            Auth::user()->setNotify($notification);
+        foreach ($request->input('notifications') as $notification => $enable) {
+            Auth::user()->setNotification($notification, $enable);
         }
 
         Auth::user()->save();

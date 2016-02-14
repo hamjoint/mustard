@@ -51,10 +51,13 @@ trait CanNotify
      * Set a notification.
      *
      * @param $option string
+     * @param $enable bool
      */
-    public function setNotify($option)
+    public function setNotification($option, $enable)
     {
-        $this->notifications = ($this->notifications | $option);
+        $this->notifications = $enable
+            ? ($this->notifications | $option)
+            : ($this->notifications ^ $option);
     }
 
     /**
