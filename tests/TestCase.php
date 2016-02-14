@@ -50,11 +50,78 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
 
         $app[Kernel::class]->call('vendor:publish', ['--force' => true]);
 
-        $app[EloquentFactory::class]->define(Hamjoint\Mustard\User::class, function (Faker\Generator $faker) {
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\Category::class, function (Faker\Generator $faker) {
             return [
-                'username' => $faker->name,
+                'name' => implode(' ', $faker->words),
+                'slug' => $faker->word,
+                'sort' => $faker->randomDigitNotNull,
+            ];
+        });
+
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\DeliveryOption::class, function (Faker\Generator $faker) {
+            return [
+                'name' => implode(' ', $faker->words),
+                'slug' => $faker->word,
+                'sort' => $faker->randomDigitNotNull,
+            ];
+        });
+
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\Item::class, function (Faker\Generator $faker) {
+            $seller = factory(Hamjoint\Mustard\User::class)->create();
+
+            $duration = factory(Hamjoint\Mustard\ListingDuration::class)->create();
+
+            $start_price = mt_rand(50, 500000) / 100;
+
+            $created = mt_rand($seller->joined, time());
+
+            $start_date = mt_rand($created, time() + 86400 * 14);
+
+            return [
+                'name' => implode(' ', $faker->words(mt_rand(2, 5))),
+                'description' => implode("\n\n", $faker->paragraphs(2)),
+                'auction' => false,
+                'quantity' => mt_rand(1, 100),
+                'start_price' => $start_price,
+                'bidding_price' => null,
+                'reserve_price' => mt_rand($start_price * 100, 500000) / 100,
+                'fixed_price' => !mt_rand(0, 3) ? $start_price + mt_rand(50, 500000) / 100 : 0,
+                'commission' => mt_rand(0, 100) / 100,
+                'duration' => $duration->duration,
+                'created' => $created,
+                'start_date' => $start_date,
+                'end_date' => $start_date + $duration->duration,
+                'collection_location' => $faker->city,
+                'payment_other' => mt_rand(0, 1),
+                'returns_period' => mt_rand(7, 21),
+                'user_id' => $seller->userId,
+                'item_condition_id' => factory(Hamjoint\Mustard\ItemCondition::class)->create()->itemConditionId,
+            ];
+        });
+
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\ItemCondition::class, function (Faker\Generator $faker) {
+            return [
+                'name' => $faker->word,
+            ];
+        });
+
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\ListingDuration::class, function (Faker\Generator $faker) {
+            return [
+                'duration' => mt_rand(3600, 3600 * 24 * 14),
+            ];
+        });
+
+        $app[EloquentFactory::class]->define(Hamjoint\Mustard\User::class, function (Faker\Generator $faker) {
+            $joined = mt_rand(time() - mt_rand(0, 86400 * 200), time());
+
+            return [
+                'username' => $faker->userName,
                 'email' => $faker->email,
-                'password' => bcrypt(str_random(10)),
+                'password' => Hash::make(str_random(10)),
+                'joined' => $joined,
+                'locale' => $faker->locale,
+                'currency' => $faker->currencyCode,
+                'last_login' => mt_rand($joined, time()),
                 'remember_token' => str_random(10),
             ];
         });
