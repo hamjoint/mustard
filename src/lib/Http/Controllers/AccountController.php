@@ -115,13 +115,13 @@ class AccountController extends Controller
             ]
         );
 
-        if ($request->get('email') == Auth::user()->email) {
+        if ($request->input('email') == Auth::user()->email) {
             return redirect()->back()->withErrors([
                 'email' => trans('mustard::account.email_same'),
             ]);
         }
 
-        if (User::findByEmail($request->get('email'))) {
+        if (User::findByEmail($request->input('email'))) {
             return redirect()->back()->withErrors([
                 'email' => trans('mustard::account.email_exists'),
             ]);
@@ -131,10 +131,10 @@ class AccountController extends Controller
         Auth::user()->sendEmail(
             trans('mustard::account.email_changed'),
             'mustard::emails.account.email-changed',
-            ['new_email' => $request->get('email')]
+            ['new_email' => $request->input('email')]
         );
 
-        Auth::user()->email = $request->get('email');
+        Auth::user()->email = $request->input('email');
 
         if (method_exists('unverify', Auth::user())) {
             Auth::user()->unverify();
@@ -161,12 +161,23 @@ class AccountController extends Controller
      * Change account notification settings.
      *
      * @return \Illuminate\Http\RedirectResponse
-     *
-     * @todo Add logic
      */
-    public function changeNotifications()
+    public function changeNotifications(Request $request)
     {
-        return redirect()->back();
+        $this->validate(
+            $request,
+            [
+                'notifications' => 'required|array',
+            ]
+        );
+
+        foreach ($request->input('notifications') as $notification) {
+            Auth::user()->setNotify($notification);
+        }
+
+        Auth::user()->save();
+
+        return redirect()->back()->withStatus(trans('mustard::account.notifications_changed'));
     }
 
     /**
