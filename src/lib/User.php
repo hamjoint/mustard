@@ -35,6 +35,11 @@ class User extends NonSequentialIdModel implements AuthenticatableContract, Auth
 {
     use Authenticatable, Authorizable, CanResetPassword;
 
+    const NEW_BIDS = 1;
+    const NEW_WATCHERS = 2;
+    const ENDING_ITEMS = 4;
+    const 
+
     /**
      * The database table used by the model.
      *
@@ -69,12 +74,14 @@ class User extends NonSequentialIdModel implements AuthenticatableContract, Auth
         $vars['username'] = $username = $this->username;
 
         Mail::queue(['text' => $view], $vars, function ($message) use ($email, $username, $subject) {
-            $message->subject($subject)
-                ->to($email, $username)
-                ->replyTo(
-                    config('mustard.support.email'),
-                    config('mustard.support.name')
+            $message->subject($subject)->to($email, $username);
+
+            if (config()->has('mail.reply_to')) {
+                $message->replyTo(
+                    config('mail.reply_to.email'),
+                    config('mail.reply_to.name')
                 );
+            }
         });
     }
 
