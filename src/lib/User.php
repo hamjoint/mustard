@@ -33,7 +33,7 @@ use Mail;
 
 class User extends NonSequentialIdModel implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use Authenticatable, Authorizable, CanResetPassword;
+    use Authenticatable, Authorizable, CanResetPassword, CanNotify;
 
     /**
      * The database table used by the model.
