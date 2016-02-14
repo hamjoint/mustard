@@ -35,11 +35,6 @@ class User extends NonSequentialIdModel implements AuthenticatableContract, Auth
 {
     use Authenticatable, Authorizable, CanResetPassword;
 
-    const NEW_BIDS = 1;
-    const NEW_WATCHERS = 2;
-    const ENDING_ITEMS = 4;
-    const 
-
     /**
      * The database table used by the model.
      *
