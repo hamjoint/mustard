@@ -224,7 +224,7 @@ class AccountControllerTest extends TestCase
         $this->actingAs($user)
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AccountController@changeNotifications'), [
-                'notifications' => [1, 4],
+                'notifications' => [1 => true, 2 => false, 4 => true],
             ])
             ->assertRedirectedToAction($previous_url);
 
