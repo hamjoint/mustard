@@ -198,6 +198,23 @@ class AccountControllerTest extends TestCase
             ->assertResponseOk();
     }
 
+    public function testChangeNotificationsEmpty()
+    {
+        $user = factory(Hamjoint\Mustard\User::class)->make();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AccountController@showChangeNotificationsForm';
+
+        $this->actingAs($user)
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AccountController@changeNotifications'), [
+                'notifications' => [],
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        // Check the error was sent to the user
+        $this->assertSessionHasErrors('notifications');
+    }
+
     public function testChangeNotifications()
     {
         $user = factory(Hamjoint\Mustard\User::class)->make();
@@ -207,12 +224,16 @@ class AccountControllerTest extends TestCase
         $this->actingAs($user)
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AccountController@changeNotifications'), [
-                'confirm' => 'garbage',
+                'notifications' => [1, 4],
             ])
             ->assertRedirectedToAction($previous_url);
 
-        // Check the error was sent to the user
-        $this->assertSessionHasErrors('confirm');
+        $this->assertTrue($user->canNotify('new_bids'));
+
+        $this->assertTrue($user->canNotify('ending_items'));
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::account.notifications_changed');
     }
 
     public function testCloseAccountPage()
