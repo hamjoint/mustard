@@ -41,6 +41,7 @@ class MustardTables extends Migration
             $table->char('currency', 3);
             $table->integer('joined')->unsigned();
             $table->integer('last_login')->unsigned();
+            $table->tinyInteger('notifications')->unsigned();
 
             $table->renameColumn('id', 'user_id');
             $table->renameColumn('name', 'username');
@@ -190,6 +191,7 @@ class MustardTables extends Migration
             $table->dropColumn('currency');
             $table->dropColumn('joined');
             $table->dropColumn('last_login');
+            $table->dropColumn('notifications');
             $table->timestamps();
 
             $table->renameColumn('user_id', 'id');
