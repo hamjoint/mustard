@@ -43,7 +43,7 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function getIndex()
+    public function index()
     {
         return mustard_redirect('/admin/dashboard');
     }
@@ -196,6 +196,117 @@ class AdminController extends Controller
             'table'      => $table,
             'categories' => $table->paginate(),
         ]);
+    }
+
+    /**
+     * Create a category.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function createCategory(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'parent_category_id' => 'integer|exists:categories',
+                'name' => 'required',
+                'slug' => 'required',
+            ]
+        );
+
+        $category = new Category();
+
+        $category->parentCategoryId = $request->input('parent_category_id');
+        $category->name = $request->input('name');
+        $category->slug = $request->input('slug');
+
+        $category->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.category_created'));
+    }
+
+    /**
+     * Update a category.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateCategory(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'category_id' => 'required|integer|exists:categories',
+                'parent_category_id' => 'integer|exists:categories,category_id',
+                'name' => 'required',
+                'slug' => 'required',
+            ]
+        );
+
+        $category = Category::find($request->input('category_id'));
+
+        $parent = Category::find($request->input('parent_category_id'));
+
+        if (in_array($request->input('parent_category_id'), $category->getDescendantIds())) {
+            return redirect()->back()->withErrors(['parent_category_id' => trans('mustard::admin.category_parent_is_child')]);
+        }
+
+        $category->parent()->associate($parent);
+        $category->name = $request->input('name');
+        $category->slug = $request->input('slug');
+
+        $category->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.category_updated'));
+    }
+
+    /**
+     * Delete a category.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteCategory(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'category_id' => 'required|integer|exists:categories',
+            ]
+        );
+
+        $category = Category::find($request->input('category_id'));
+
+        if ($category->items()->count()) {
+            return redirect()->back()->withErrors(['parent_category_id' => trans('mustard::admin.category_has_items')]);
+        }
+
+        $category->delete();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.category_deleted'));
+    }
+
+    /**
+     * Sort categories;
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sortCategories(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'categories' => 'required|array',
+            ]
+        );
+
+        foreach ($request->input('categories') as $category_id => $sort) {
+            $category = Category::find($category_id);
+
+            $category->sort = $sort;
+
+            $category->save();
+        }
+
+        return redirect()->back()->withStatus(trans('mustard::admin.categories_sorted'));
     }
 
     /**
