@@ -148,7 +148,8 @@ class TestSeeder extends Seeder
             $user = new User();
 
             $user->username = $this->faker->userName;
-            while (User::findByEmail($user->email = $this->faker->email)) {}
+            while (User::findByEmail($user->email = $this->faker->email)) {
+            }
             $user->password = Hash::make('password');
             $user->verified = true;
             $user->joined = mt_rand($this->now - mt_rand(0, 86400 * 200), $this->now);

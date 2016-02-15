@@ -209,8 +209,8 @@ class AdminController extends Controller
             $request,
             [
                 'parent_category_id' => 'integer|exists:categories',
-                'name' => 'required',
-                'slug' => 'required',
+                'name'               => 'required',
+                'slug'               => 'required',
             ]
         );
 
@@ -235,10 +235,10 @@ class AdminController extends Controller
         $this->validate(
             $request,
             [
-                'category_id' => 'required|integer|exists:categories',
+                'category_id'        => 'required|integer|exists:categories',
                 'parent_category_id' => 'integer|exists:categories,category_id',
-                'name' => 'required',
-                'slug' => 'required',
+                'name'               => 'required',
+                'slug'               => 'required',
             ]
         );
 

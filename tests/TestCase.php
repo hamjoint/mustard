@@ -78,24 +78,24 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
             $start_date = mt_rand($created, time() + 86400 * 14);
 
             return [
-                'name' => implode(' ', $faker->words(mt_rand(2, 5))),
-                'description' => implode("\n\n", $faker->paragraphs(2)),
-                'auction' => false,
-                'quantity' => mt_rand(1, 100),
-                'start_price' => $start_price,
-                'bidding_price' => null,
-                'reserve_price' => mt_rand($start_price * 100, 500000) / 100,
-                'fixed_price' => !mt_rand(0, 3) ? $start_price + mt_rand(50, 500000) / 100 : 0,
-                'commission' => mt_rand(0, 100) / 100,
-                'duration' => $duration->duration,
-                'created' => $created,
-                'start_date' => $start_date,
-                'end_date' => $start_date + $duration->duration,
+                'name'                => implode(' ', $faker->words(mt_rand(2, 5))),
+                'description'         => implode("\n\n", $faker->paragraphs(2)),
+                'auction'             => false,
+                'quantity'            => mt_rand(1, 100),
+                'start_price'         => $start_price,
+                'bidding_price'       => null,
+                'reserve_price'       => mt_rand($start_price * 100, 500000) / 100,
+                'fixed_price'         => !mt_rand(0, 3) ? $start_price + mt_rand(50, 500000) / 100 : 0,
+                'commission'          => mt_rand(0, 100) / 100,
+                'duration'            => $duration->duration,
+                'created'             => $created,
+                'start_date'          => $start_date,
+                'end_date'            => $start_date + $duration->duration,
                 'collection_location' => $faker->city,
-                'payment_other' => mt_rand(0, 1),
-                'returns_period' => mt_rand(7, 21),
-                'user_id' => $seller->userId,
-                'item_condition_id' => factory(Hamjoint\Mustard\ItemCondition::class)->create()->itemConditionId,
+                'payment_other'       => mt_rand(0, 1),
+                'returns_period'      => mt_rand(7, 21),
+                'user_id'             => $seller->userId,
+                'item_condition_id'   => factory(Hamjoint\Mustard\ItemCondition::class)->create()->itemConditionId,
             ];
         });
 
@@ -115,13 +115,13 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
             $joined = mt_rand(time() - mt_rand(0, 86400 * 200), time());
 
             return [
-                'username' => $faker->userName,
-                'email' => $faker->email,
-                'password' => Hash::make(str_random(10)),
-                'joined' => $joined,
-                'locale' => $faker->locale,
-                'currency' => $faker->currencyCode,
-                'last_login' => mt_rand($joined, time()),
+                'username'       => $faker->userName,
+                'email'          => $faker->email,
+                'password'       => Hash::make(str_random(10)),
+                'joined'         => $joined,
+                'locale'         => $faker->locale,
+                'currency'       => $faker->currencyCode,
+                'last_login'     => mt_rand($joined, time()),
                 'remember_token' => str_random(10),
             ];
         });

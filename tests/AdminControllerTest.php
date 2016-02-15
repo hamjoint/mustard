@@ -37,9 +37,9 @@ class AdminControllerTest extends TestCase
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@createCategory'), [
                 'parent_category_id' => 1,
-                'name' => 'Test',
-                'slug' => 'test',
-                'sort' => 1,
+                'name'               => 'Test',
+                'slug'               => 'test',
+                'sort'               => 1,
             ])
             ->assertRedirectedToAction($previous_url);
 
@@ -57,15 +57,15 @@ class AdminControllerTest extends TestCase
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@createCategory'), [
                 'parent_category_id' => null,
-                'name' => 'Test',
-                'slug' => 'test',
+                'name'               => 'Test',
+                'slug'               => 'test',
             ])
             ->assertRedirectedToAction($previous_url);
 
         $this->seeInDatabase('categories', [
             'parent_category_id' => null,
-            'name' => 'Test',
-            'slug' => 'test',
+            'name'               => 'Test',
+            'slug'               => 'test',
         ]);
 
         // Check the confirmation message was sent to the user
@@ -85,15 +85,15 @@ class AdminControllerTest extends TestCase
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@updateCategory'), [
-                'category_id' => $category->categoryId,
+                'category_id'        => $category->categoryId,
                 'parent_category_id' => $child->categoryId,
-                'name' => 'Test',
-                'slug' => 'test',
+                'name'               => 'Test',
+                'slug'               => 'test',
             ])
             ->assertRedirectedToAction($previous_url);
 
         $this->notSeeInDatabase('categories', [
-            'category_id' => $category->categoryId,
+            'category_id'        => $category->categoryId,
             'parent_category_id' => $child->categoryId,
         ]);
 
@@ -112,18 +112,18 @@ class AdminControllerTest extends TestCase
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@updateCategory'), [
-                'category_id' => $category->categoryId,
+                'category_id'        => $category->categoryId,
                 'parent_category_id' => $parent->categoryId,
-                'name' => 'Test',
-                'slug' => 'test',
+                'name'               => 'Test',
+                'slug'               => 'test',
             ])
             ->assertRedirectedToAction($previous_url);
 
         $this->seeInDatabase('categories', [
-            'category_id' => $category->categoryId,
+            'category_id'        => $category->categoryId,
             'parent_category_id' => $parent->categoryId,
-            'name' => 'Test',
-            'slug' => 'test',
+            'name'               => 'Test',
+            'slug'               => 'test',
         ]);
 
         // Check the confirmation message was sent to the user
