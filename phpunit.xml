@@ -3,7 +3,6 @@
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTestsThatDoNotTestAnything="true"
          bootstrap="vendor/autoload.php"
-         checkForUnintentionallyCoveredCode="true"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"

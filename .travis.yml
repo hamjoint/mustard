@@ -10,3 +10,4 @@ before_script:
   - mysql -e 'CREATE DATABASE mustard_test'
 install:
   - composer install --no-interaction --prefer-source
+script: vendor/bin/phpunit
