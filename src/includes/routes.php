@@ -70,6 +70,7 @@ Route::group([
         Route::get('admin/users', 'AdminController@showUsersTable');
         Route::get('admin/users/edit', 'AdminController@showUserForm');
         Route::post('admin/users/edit', 'AdminController@editUser');
+        Route::post('admin/users/reset-password', 'AdminController@resetUserPassword');
         Route::get('admin/item-conditions', 'AdminController@showItemConditionsTable');
         Route::post('admin/item-conditions/new', 'AdminController@createItemCondition');
         Route::post('admin/item-conditions/update', 'AdminController@updateItemCondition');
@@ -79,6 +80,7 @@ Route::group([
         Route::post('admin/listing-durations/new', 'AdminController@createListingDuration');
         Route::post('admin/listing-durations/update', 'AdminController@updateListingDuration');
         Route::post('admin/listing-durations/delete', 'AdminController@deleteListingDuration');
+        Route::post('admin/listing-durations/sort', 'AdminController@sortListingDurations');
         Route::get('admin/mailout', 'AdminController@showMailoutForm');
         Route::post('admin/mailout', 'AdminController@sendMailout');
         Route::get('admin/settings', 'AdminController@showSettingsTable');

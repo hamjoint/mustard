@@ -29,15 +29,6 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $app->config->set('app.debug', true);
         $app->config->set('app.key', md5('test'));
 
-        $app->config->set('auth.defaults.verify_emails', 'users');
-        $app->config->set('auth.provider.users.model', Hamjoint\Mustard\User::class);
-        $app->config->set('auth.passwords.users.email', 'mustard::emails.password');
-        $app->config->set('auth.passwords.users.table', 'email_tokens');
-        $app->config->set('auth.verify_emails.users.provider', 'users');
-        $app->config->set('auth.verify_emails.users.email', 'mustard::emails.verify');
-        $app->config->set('auth.verify_emails.users.table', 'email_tokens');
-        $app->config->set('auth.verify_emails.users.expire', 60);
-
         $app->config->set('database.default', 'mysql');
         $app->config->set('database.connections.mysql.driver', 'mysql');
         $app->config->set('database.connections.mysql.database', 'mustard_test');

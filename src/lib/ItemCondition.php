@@ -42,8 +42,8 @@ class ItemCondition extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function item()
+    public function items()
     {
-        return $this->HasMany('\Hamjoint\Mustard\ItemCondition');
+        return $this->HasMany('\Hamjoint\Mustard\Item');
     }
 }

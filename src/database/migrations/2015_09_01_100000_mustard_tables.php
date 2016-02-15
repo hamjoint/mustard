@@ -63,11 +63,13 @@ class MustardTables extends Migration
         Schema::create('item_conditions', function (Blueprint $table) {
             $table->mediumInteger('item_condition_id', true)->unsigned();
             $table->string('name', 64);
+            $table->tinyInteger('sort')->unsigned();
         });
 
         Schema::create('listing_durations', function (Blueprint $table) {
             $table->mediumInteger('listing_duration_id', true)->unsigned();
             $table->integer('duration')->unsigned();
+            $table->tinyInteger('sort')->unsigned();
         });
 
         Schema::create('items', function (Blueprint $table) {

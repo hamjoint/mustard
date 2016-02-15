@@ -152,7 +152,7 @@ class AdminControllerTest extends TestCase
         ]);
 
         // Check the error was sent to the user
-        $this->assertSessionHasErrors('parent_category_id');
+        $this->assertSessionHasErrors('category_id');
     }
 
     public function testDeleteCategoryValid()
@@ -174,6 +174,34 @@ class AdminControllerTest extends TestCase
         $this->assertSessionHas('status', 'mustard::admin.category_deleted');
     }
 
+    public function testSortCategories()
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $category = factory(Hamjoint\Mustard\Category::class)->create();
+
+            $categories[$category->categoryId] = $i;
+        }
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showCategoriesTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@sortCategories'), [
+                'categories' => $categories
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        foreach ($categories as $category_id => $sort) {
+            $this->seeInDatabase('categories', [
+                'category_id' => $category_id,
+                'sort' => $sort,
+            ]);
+        }
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.categories_sorted');
+    }
+
     public function testItemsPage()
     {
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
@@ -188,6 +216,122 @@ class AdminControllerTest extends TestCase
             ->assertResponseOk();
     }
 
+    public function testCreateItemConditionValid()
+    {
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showItemConditionsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@createItemCondition'), [
+                'name' => 'Test',
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('item_conditions', [
+            'name' => 'Test',
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.item_condition_created');
+    }
+
+    public function testUpdateItemConditionValid()
+    {
+        $item_condition = factory(Hamjoint\Mustard\ItemCondition::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showItemConditionsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@updateItemCondition'), [
+                'item_condition_id' => $item_condition->itemConditionId,
+                'name' => 'Test',
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('item_conditions', [
+            'item_condition_id' => $item_condition->itemConditionId,
+            'name' => 'Test',
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.item_condition_updated');
+    }
+
+    public function testDeleteItemConditionWithItems()
+    {
+        $item_condition = factory(Hamjoint\Mustard\ItemCondition::class)->create();
+
+        $item = factory(Hamjoint\Mustard\Item::class)->create();
+
+        $item_condition->items()->save($item);
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showItemConditionsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@deleteItemCondition'), [
+                'item_condition_id' => $item_condition->itemConditionId,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('item_conditions', [
+            'item_condition_id' => $item_condition->itemConditionId,
+        ]);
+
+        // Check the error was sent to the user
+        $this->assertSessionHasErrors('item_condition_id');
+    }
+
+    public function testDeleteItemConditionValid()
+    {
+        $item_condition = factory(Hamjoint\Mustard\ItemCondition::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showItemConditionsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@deleteItemCondition'), [
+                'item_condition_id' => $item_condition->itemConditionId,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->notSeeInDatabase('item_conditions', [
+            'item_condition_id' => $item_condition->itemConditionId,
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.item_condition_deleted');
+    }
+
+    public function testSortItemConditions()
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $item_condition = factory(Hamjoint\Mustard\ItemCondition::class)->create();
+
+            $item_conditions[$item_condition->itemConditionId] = $i;
+        }
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showItemConditionsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@sortItemConditions'), [
+                'item_conditions' => $item_conditions
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        foreach ($item_conditions as $item_condition_id => $sort) {
+            $this->seeInDatabase('item_conditions', [
+                'item_condition_id' => $item_condition_id,
+                'sort' => $sort,
+            ]);
+        }
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.item_conditions_sorted');
+    }
+
     public function testListingDurationsPage()
     {
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
@@ -195,11 +339,123 @@ class AdminControllerTest extends TestCase
             ->assertResponseOk();
     }
 
+    public function testCreateListingDurationValid()
+    {
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showListingDurationsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@createListingDuration'), [
+                'duration' => 3600,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('listing_durations', [
+            'duration' => 3600,
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.listing_duration_created');
+    }
+
+    public function testUpdateListingDurationValid()
+    {
+        $listing_duration = factory(Hamjoint\Mustard\ListingDuration::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showListingDurationsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@updateListingDuration'), [
+                'listing_duration_id' => $listing_duration->listingDurationId,
+                'duration' => 3600,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('listing_durations', [
+            'listing_duration_id' => $listing_duration->listingDurationId,
+            'duration' => 3600,
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.listing_duration_updated');
+    }
+
+    public function testDeleteListingDurationValid()
+    {
+        $listing_duration = factory(Hamjoint\Mustard\ListingDuration::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showListingDurationsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@deleteListingDuration'), [
+                'listing_duration_id' => $listing_duration->listingDurationId,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->notSeeInDatabase('listing_durations', [
+            'listing_duration_id' => $listing_duration->listingDurationId,
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.listing_duration_deleted');
+    }
+
+    public function testSortListingDurations()
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $listing_duration = factory(Hamjoint\Mustard\ListingDuration::class)->create();
+
+            $listing_durations[$listing_duration->listingDurationId] = $i;
+        }
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showListingDurationsTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@sortListingDurations'), [
+                'listing_durations' => $listing_durations
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        foreach ($listing_durations as $listing_duration_id => $sort) {
+            $this->seeInDatabase('listing_durations', [
+                'listing_duration_id' => $listing_duration_id,
+                'sort' => $sort,
+            ]);
+        }
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.listing_durations_sorted');
+    }
+
     public function testUsersPage()
     {
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
             ->get(action('\Hamjoint\Mustard\Http\Controllers\AdminController@showUsersTable'))
             ->assertResponseOk();
+    }
+
+    public function testUserResetPassword()
+    {
+        $user = factory(Hamjoint\Mustard\User::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showUsersTable';
+
+        $this->actingAs($user)
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@resetUserPassword'), [
+                'user_id' => $user->userId,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase($this->app['config']->get('auth.passwords.users.table'), [
+            'email' => $user->email,
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.password_reset');
     }
 
     public function testSettingsPage()

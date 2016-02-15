@@ -21,8 +21,6 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Hamjoint\Mustard\Http\Controllers;
 
-use Cache;
-use DB;
 use Hamjoint\Mustard\Category;
 use Hamjoint\Mustard\Item;
 use Hamjoint\Mustard\ItemCondition;
@@ -34,7 +32,11 @@ use Hamjoint\Mustard\Tables\AdminListingDurations;
 use Hamjoint\Mustard\Tables\AdminSettings;
 use Hamjoint\Mustard\Tables\AdminUsers;
 use Hamjoint\Mustard\User;
+use Illuminate\Auth\Passwords\PasswordBrokerManager;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 
 class AdminController extends Controller
 {
@@ -53,12 +55,12 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showDashboard()
+    public function showDashboard(CacheManager $cache)
     {
         $stats = [
             'Item stats' => [
-                'Listed' => function ($range) {
-                    return mustard_number(Cache::remember(
+                'Listed' => function ($range) use ($cache) {
+                    return mustard_number($cache->remember(
                         'total_items',
                         config('mustard.dashboard_cache'),
                         function () use ($range) {
@@ -66,8 +68,8 @@ class AdminController extends Controller
                         }
                     ));
                 },
-                'Watched' => function ($range) {
-                    return mustard_number(Cache::remember(
+                'Watched' => function ($range) use ($cache) {
+                    return mustard_number($cache->remember(
                         'total_items',
                         config('mustard.dashboard_cache'),
                         function () use ($range) {
@@ -77,8 +79,8 @@ class AdminController extends Controller
                 },
             ],
             'User stats' => [
-                'Registered' => function ($range) {
-                    return mustard_number(Cache::remember(
+                'Registered' => function ($range) use ($cache) {
+                    return mustard_number($cache->remember(
                         'total_users',
                         config('mustard.dashboard_cache'),
                         function () use ($range) {
@@ -86,8 +88,8 @@ class AdminController extends Controller
                         }
                     ));
                 },
-                'Sellers' => function ($range) {
-                    return mustard_number(Cache::remember(
+                'Sellers' => function ($range) use ($cache) {
+                    return mustard_number($cache->remember(
                         'total_sellers',
                         config('mustard.dashboard_cache'),
                         function () use ($range) {
@@ -99,8 +101,8 @@ class AdminController extends Controller
         ];
 
         if (mustard_loaded('auctions')) {
-            $stats['User stats']['Bidders'] = function ($range) {
-                return mustard_number(Cache::remember(
+            $stats['User stats']['Bidders'] = function ($range) use ($cache) {
+                return mustard_number($cache->remember(
                     'total_bidders',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -109,8 +111,8 @@ class AdminController extends Controller
                 ));
             };
 
-            $stats['Item stats']['Bids placed'] = function ($range) {
-                return mustard_number(Cache::remember(
+            $stats['Item stats']['Bids placed'] = function ($range) use ($cache) {
+                return mustard_number($cache->remember(
                     'total_bids_placed',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -119,8 +121,8 @@ class AdminController extends Controller
                 ));
             };
 
-            $stats['Item stats']['Average bid amount'] = function ($range) {
-                return mustard_price(Cache::remember(
+            $stats['Item stats']['Average bid amount'] = function ($range) use ($cache) {
+                return mustard_price($cache->remember(
                     'average_bids',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -131,8 +133,8 @@ class AdminController extends Controller
         }
 
         if (mustard_loaded('commerce')) {
-            $stats['User stats']['Buyers'] = function ($range) {
-                return mustard_number(Cache::remember(
+            $stats['User stats']['Buyers'] = function ($range) use ($cache) {
+                return mustard_number($cache->remember(
                     'total_buyers',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -141,8 +143,8 @@ class AdminController extends Controller
                 ));
             };
 
-            $stats['Transaction stats']['Purchases'] = function ($range) {
-                return mustard_number(Cache::remember(
+            $stats['Transaction stats']['Purchases'] = function ($range) use ($cache) {
+                return mustard_number($cache->remember(
                     'total_purchases',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -151,8 +153,8 @@ class AdminController extends Controller
                 ));
             };
 
-            $stats['Transaction stats']['Average amount'] = function ($range) {
-                return mustard_price(Cache::remember(
+            $stats['Transaction stats']['Average amount'] = function ($range) use ($cache) {
+                return mustard_price($cache->remember(
                     'average_purchases',
                     config('mustard.dashboard_cache'),
                     function () use ($range) {
@@ -181,11 +183,11 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function showCategoriesTable()
+    public function showCategoriesTable(DatabaseManager $database)
     {
         $categories = Category::query()
             ->leftJoin('items')
-            ->addSelect(DB::raw('COUNT(items.item_id) as item_count'))
+            ->addSelect($database->raw('COUNT(items.item_id) as item_count'))
             ->groupBy('categories.category_id');
 
         $table = new AdminCategories($categories);
@@ -276,7 +278,7 @@ class AdminController extends Controller
         $category = Category::find($request->input('category_id'));
 
         if ($category->items()->count()) {
-            return redirect()->back()->withErrors(['parent_category_id' => trans('mustard::admin.category_has_items')]);
+            return redirect()->back()->withErrors(['category_id' => trans('mustard::admin.category_has_items')]);
         }
 
         $category->delete();
@@ -346,6 +348,103 @@ class AdminController extends Controller
     }
 
     /**
+     * Create an item condition.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function createItemCondition(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'name' => 'required',
+            ]
+        );
+
+        $item_condition = new ItemCondition();
+
+        $item_condition->name = $request->input('name');
+
+        $item_condition->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.item_condition_created'));
+    }
+
+    /**
+     * Update an item condition.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateItemCondition(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'item_condition_id' => 'required|integer|exists:item_conditions',
+                'name'              => 'required',
+            ]
+        );
+
+        $item_condition = ItemCondition::find($request->input('item_condition_id'));
+
+        $item_condition->name = $request->input('name');
+
+        $item_condition->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.item_condition_updated'));
+    }
+
+    /**
+     * Delete an item condition.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteItemCondition(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'item_condition_id' => 'required|integer|exists:item_conditions',
+            ]
+        );
+
+        $item_condition = ItemCondition::find($request->input('item_condition_id'));
+
+        if ($item_condition->items()->count()) {
+            return redirect()->back()->withErrors(['item_condition_id' => trans('mustard::admin.item_condition_has_items')]);
+        }
+
+        $item_condition->delete();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.item_condition_deleted'));
+    }
+
+    /**
+     * Sort item conditions.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sortItemConditions(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'item_conditions' => 'required|array',
+            ]
+        );
+
+        foreach ($request->input('item_conditions') as $item_condition_id => $sort) {
+            $item_condition = ItemCondition::find($item_condition_id);
+
+            $item_condition->sort = $sort;
+
+            $item_condition->save();
+        }
+
+        return redirect()->back()->withStatus(trans('mustard::admin.item_conditions_sorted'));
+    }
+
+    /**
      * Return the admin listing durations view.
      *
      * @return \Illuminate\View\View
@@ -358,6 +457,99 @@ class AdminController extends Controller
             'table'             => $table,
             'listing_durations' => $table->paginate(),
         ]);
+    }
+
+    /**
+     * Create a listing duration.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function createListingDuration(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'duration' => 'required|integer',
+            ]
+        );
+
+        $listing_duration = new ListingDuration();
+
+        $listing_duration->duration = $request->input('duration');
+
+        $listing_duration->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.listing_duration_created'));
+    }
+
+    /**
+     * Update a listing duration.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updateListingDuration(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'listing_duration_id' => 'required|integer|exists:listing_durations',
+                'duration'            => 'required',
+            ]
+        );
+
+        $listing_duration = ListingDuration::find($request->input('listing_duration_id'));
+
+        $listing_duration->duration = $request->input('duration');
+
+        $listing_duration->save();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.listing_duration_updated'));
+    }
+
+    /**
+     * Delete a listing duration.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function deleteListingDuration(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'listing_duration_id' => 'required|integer|exists:listing_durations',
+            ]
+        );
+
+        $listing_duration = ListingDuration::find($request->input('listing_duration_id'));
+
+        $listing_duration->delete();
+
+        return redirect()->back()->withStatus(trans('mustard::admin.listing_duration_deleted'));
+    }
+
+    /**
+     * Sort listing durations.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sortListingDurations(Request $request)
+    {
+        $this->validate(
+            $request,
+            [
+                'listing_durations' => 'required|array',
+            ]
+        );
+
+        foreach ($request->input('listing_durations') as $listing_duration_id => $sort) {
+            $listing_duration = ListingDuration::find($listing_duration_id);
+
+            $listing_duration->sort = $sort;
+
+            $listing_duration->save();
+        }
+
+        return redirect()->back()->withStatus(trans('mustard::admin.listing_durations_sorted'));
     }
 
     /**
@@ -377,6 +569,29 @@ class AdminController extends Controller
             'table' => $table,
             'users' => $table->paginate(),
         ]);
+    }
+
+    /**
+     * Reset a user's password.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function resetUserPassword(Request $request, PasswordBrokerManager $broker)
+    {
+        $this->validate(
+            $request,
+            [
+                'user_id' => 'required|integer|exists:users',
+            ]
+        );
+
+        $user = User::find($request->input('user_id'));
+
+        $response = $broker->sendResetLink(['user_id' => $user->userId], function (Message $message) {
+            $message->subject(trans('mustard::admin.password_reset_email_subject'));
+        });
+
+        return redirect()->back()->withStatus(trans('mustard::admin.password_reset'));
     }
 
     /**
@@ -449,6 +664,6 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->withStatus("Mailout sent to $count recipients.");
+        return redirect()->back()->withStatus(trans('mustard::admin.mailout_sent', $count));
     }
 }
