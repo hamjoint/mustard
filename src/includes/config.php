@@ -20,6 +20,6 @@ along with Mustard.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 return [
-    'uri_base' => env('MUSTARD_BASE', ''),
+    'uri_base'   => env('MUSTARD_BASE', ''),
     'front_page' => env('MUSTARD_ROOT_REDIRECT', '/buy'),
 ];

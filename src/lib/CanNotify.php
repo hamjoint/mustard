@@ -30,7 +30,7 @@ trait CanNotify
      * @var array
      */
     protected $notificationOptions = [
-        'new_bids' => 1,
+        'new_bids'     => 1,
         'new_watchers' => 2,
         'ending_items' => 4,
     ];
