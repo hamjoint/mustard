@@ -285,7 +285,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Sort categories;
+     * Sort categories.
      *
      * @return \Illuminate\Http\RedirectResponse
      */
