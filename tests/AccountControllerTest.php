@@ -215,7 +215,7 @@ class AccountControllerTest extends TestCase
         $this->assertSessionHasErrors('notifications');
     }
 
-    public function testChangeNotifications()
+    public function testChangeNotificationsValid()
     {
         $user = factory(Hamjoint\Mustard\User::class)->make();
 

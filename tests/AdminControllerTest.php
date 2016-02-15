@@ -43,6 +43,8 @@ class AdminControllerTest extends TestCase
             ])
             ->assertRedirectedToAction($previous_url);
 
+        $this->notSeeInDatabase('categories', ['name' => 'Test']);
+
         // Check the error was sent to the user
         $this->assertSessionHasErrors('parent_category_id');
     }
@@ -57,11 +59,16 @@ class AdminControllerTest extends TestCase
                 'parent_category_id' => null,
                 'name' => 'Test',
                 'slug' => 'test',
-                'sort' => 1,
             ])
             ->assertRedirectedToAction($previous_url);
 
-        // Check the error was sent to the user
+        $this->seeInDatabase('categories', [
+            'parent_category_id' => null,
+            'name' => 'Test',
+            'slug' => 'test',
+        ]);
+
+        // Check the confirmation message was sent to the user
         $this->assertSessionHas('status', 'mustard::admin.category_created');
     }
 
@@ -71,7 +78,7 @@ class AdminControllerTest extends TestCase
 
         $child = factory(Hamjoint\Mustard\Category::class)->create();
 
-        $child->parent()->associate($category);
+        $category->children()->save($child);
 
         $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showCategoriesTable';
 
@@ -82,12 +89,45 @@ class AdminControllerTest extends TestCase
                 'parent_category_id' => $child->categoryId,
                 'name' => 'Test',
                 'slug' => 'test',
-                'sort' => 1,
             ])
             ->assertRedirectedToAction($previous_url);
 
+        $this->notSeeInDatabase('categories', [
+            'category_id' => $category->categoryId,
+            'parent_category_id' => $child->categoryId,
+        ]);
+
         // Check the error was sent to the user
         $this->assertSessionHasErrors('parent_category_id');
+    }
+
+    public function testUpdateCategoryValid()
+    {
+        $category = factory(Hamjoint\Mustard\Category::class)->create();
+
+        $parent = factory(Hamjoint\Mustard\Category::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showCategoriesTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@updateCategory'), [
+                'category_id' => $category->categoryId,
+                'parent_category_id' => $parent->categoryId,
+                'name' => 'Test',
+                'slug' => 'test',
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->seeInDatabase('categories', [
+            'category_id' => $category->categoryId,
+            'parent_category_id' => $parent->categoryId,
+            'name' => 'Test',
+            'slug' => 'test',
+        ]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.category_updated');
     }
 
     public function testDeleteCategoryWithItems()
@@ -107,8 +147,31 @@ class AdminControllerTest extends TestCase
             ])
             ->assertRedirectedToAction($previous_url);
 
+        $this->seeInDatabase('categories', [
+            'category_id' => $category->categoryId,
+        ]);
+
         // Check the error was sent to the user
         $this->assertSessionHasErrors('parent_category_id');
+    }
+
+    public function testDeleteCategoryValid()
+    {
+        $category = factory(Hamjoint\Mustard\Category::class)->create();
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showCategoriesTable';
+
+        $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@deleteCategory'), [
+                'category_id' => $category->categoryId,
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        $this->notSeeInDatabase('categories', ['category_id' => $category->categoryId]);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.category_deleted');
     }
 
     public function testItemsPage()
