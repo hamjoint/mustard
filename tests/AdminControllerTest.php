@@ -443,6 +443,8 @@ class AdminControllerTest extends TestCase
 
         $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showUsersTable';
 
+        $this->expectMail(1);
+
         $this->actingAs($user)
             ->withSession(['_previous.url' => action($previous_url)])
             ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@resetUserPassword'), [
@@ -470,5 +472,32 @@ class AdminControllerTest extends TestCase
         $this->actingAs(factory(Hamjoint\Mustard\User::class)->make())
             ->get(action('\Hamjoint\Mustard\Http\Controllers\AdminController@showMailoutForm'))
             ->assertResponseOk();
+    }
+
+    public function testSendMailout()
+    {
+        $user = factory(Hamjoint\Mustard\User::class)->create();
+
+        for ($i = 0; $i < 3; $i++) {
+            $recipient = factory(Hamjoint\Mustard\User::class)->create();
+
+            $recipients[] = $recipient->userId;
+        }
+
+        $this->app->mailer->getSwiftMailer()->expects($this->exactly(3))->method('send');
+
+        $previous_url = '\Hamjoint\Mustard\Http\Controllers\AdminController@showMailoutForm';
+
+        $this->actingAs($user)
+            ->withSession(['_previous.url' => action($previous_url)])
+            ->post(action('\Hamjoint\Mustard\Http\Controllers\AdminController@sendMailout'), [
+                'users'   => $recipients,
+                'subject' => 'This is a test subject',
+                'body'    => 'This is a test body',
+            ])
+            ->assertRedirectedToAction($previous_url);
+
+        // Check the confirmation message was sent to the user
+        $this->assertSessionHas('status', 'mustard::admin.mailout_sent');
     }
 }

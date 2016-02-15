@@ -636,10 +636,10 @@ class AdminController extends Controller
      */
     public function sendMailout(Request $request)
     {
-        $this->validates(
-            $request->all(),
+        $this->validate(
+            $request,
             [
-                'users'   => 'required',
+                'users'   => 'required|array',
                 'subject' => 'required|min:4',
                 'body'    => 'required|min:10',
             ]
@@ -651,12 +651,10 @@ class AdminController extends Controller
             if (in_array($user->userId, $request->input('users'))) {
                 $user->sendEmail(
                     $request->input('subject'),
-                    'emails.mailout',
+                    'mustard::emails.mailout',
                     [
-                        'body'   => $request->input('body'),
-                        'handle' => $user->getHandle(),
-                        'email'  => $user->email,
-                        'joined' => $user->joined,
+                        'body'     => $request->input('body'),
+                        'username' => $user->username,
                     ]
                 );
 
@@ -664,6 +662,6 @@ class AdminController extends Controller
             }
         }
 
-        return redirect()->back()->withStatus(trans('mustard::admin.mailout_sent', $count));
+        return redirect()->back()->withStatus(trans('mustard::admin.mailout_sent', ['count' => $count]));
     }
 }

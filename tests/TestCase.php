@@ -34,8 +34,15 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         $app->config->set('database.connections.mysql.database', 'mustard_test');
         $app->config->set('database.connections.mysql.username', 'root');
 
-        $app->config->set('mail.driver', 'log');
-        $app->config->set('mail.from.address', 'test@localhost');
+        $swift_transport_stub = $this->getMock(Swift_Transport::class);
+
+        $swift_mailer_stub = $this->getMockBuilder(Swift_Mailer::class)->setConstructorArgs([
+            $this->getMock(Swift_Transport::class)
+        ])->getMock();
+
+        $swift_mailer_stub->expects($this->any())->method('getTransport')->will($this->returnValue($swift_transport_stub));
+
+        $app->mailer->setSwiftMailer($swift_mailer_stub);
 
         $app->register('\Hamjoint\Mustard\Providers\MustardServiceProvider');
 
@@ -118,5 +125,10 @@ class TestCase extends Illuminate\Foundation\Testing\TestCase
         });
 
         return $app;
+    }
+
+    public function expectMail($count)
+    {
+        $this->app->mailer->getSwiftMailer()->expects($this->exactly($count))->method('send');
     }
 }

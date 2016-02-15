@@ -77,6 +77,8 @@ class AccountControllerTest extends TestCase
 
         $new_password = 'test_password2';
 
+        $this->expectMail(1);
+
         $previous_url = '\Hamjoint\Mustard\Http\Controllers\AccountController@showChangePasswordForm';
 
         $this->actingAs($user)
@@ -174,6 +176,8 @@ class AccountControllerTest extends TestCase
         $user = factory(Hamjoint\Mustard\User::class)->make();
 
         $email = 'test@example.com';
+
+        $this->expectMail(1);
 
         $previous_url = '\Hamjoint\Mustard\Http\Controllers\AccountController@showChangeEmailForm';
 
