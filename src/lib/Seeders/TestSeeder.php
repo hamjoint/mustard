@@ -147,9 +147,8 @@ class TestSeeder extends Seeder
         for ($i = 1; $i <= self::TOTAL_USERS; $i++) {
             $user = new User();
 
-            while (User::findByEmail($user->email = $this->faker->email));
-
             $user->username = $this->faker->userName;
+            while (User::findByEmail($user->email = $this->faker->email)) {}
             $user->password = Hash::make('password');
             $user->verified = true;
             $user->joined = mt_rand($this->now - mt_rand(0, 86400 * 200), $this->now);
@@ -158,8 +157,6 @@ class TestSeeder extends Seeder
             $user->lastLogin = mt_rand($user->joined, $this->now);
 
             $user->save();
-
-            //if ($i == 1) $user->grantAdmin();
 
             $this->users[] = $user;
         }
